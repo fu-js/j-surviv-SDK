@@ -3,12 +3,12 @@ package jsclub.codefest2024.socket.data.Equipments;
 import com.google.gson.Gson;
 
 public class Armor {
-    private Double damageReduce;
+    private double damageReduce;
     private int rare;
     private int point;
 
     // Constructor
-    public Armor(Double damageReduce, int rare, int point) {
+    public Armor(double damageReduce, int rare, int point) {
         this.damageReduce = damageReduce;
         this.rare = rare;
         this.point = point;
@@ -26,7 +26,7 @@ public class Armor {
         this.point = point;
     }
 
-    public Double getDamageReduce() {
+    public double getDamageReduce() {
         return damageReduce;
     }
 

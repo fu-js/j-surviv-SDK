@@ -4,15 +4,15 @@
  */
 package jsclub.codefest2024.sdk.socket;
 
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 import jsclub.codefest2024.sdk.util.SocketUtil;
-import org.msgpack.core.MessageBufferPacker;
-import org.msgpack.core.MessagePack;
-import org.msgpack.core.MessageUnpacker;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import org.msgpack.core.MessageBufferPacker;
+import org.msgpack.core.MessagePack;
+import org.msgpack.core.MessageUnpacker;
 
 /**
  * SocketClient for connecting to a server using Socket.IO.
