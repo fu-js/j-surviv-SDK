@@ -7,6 +7,8 @@ package jsclub.codefest2024.sdk.socket.data.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.Gson;
 import jsclub.codefest2024.sdk.socket.data.enemies.*;
 import jsclub.codefest2024.sdk.socket.data.equipments.*;
 import jsclub.codefest2024.sdk.socket.data.obstacles.*;
@@ -156,4 +158,8 @@ public class MapInit {
         this.chasers = chasers;
     }
 
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
 }

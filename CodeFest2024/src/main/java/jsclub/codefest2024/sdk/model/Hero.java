@@ -5,6 +5,7 @@
 package jsclub.codefest2024.sdk.model;
 
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import jsclub.codefest2024.sdk.socket.EventName;
 import jsclub.codefest2024.sdk.socket.SocketClient;
 import jsclub.codefest2024.sdk.socket.data.emitData.*;
@@ -21,7 +22,9 @@ public class Hero {
     private String player_name = "";
     private String gameID = "";
     private final SocketClient socketClient;
-    
+    private Emitter.Listener onMapUpdate = objects -> {
+    };
+
     public Hero(String player_name, String gameID) {
         this.player_name = player_name;
         this.gameID = gameID;
@@ -39,6 +42,10 @@ public class Hero {
     }
     public String getGameID() {
         return gameID;
+    }
+
+    public void setOnMapUpdate(Emitter.Listener onMapUpdate) {
+        this.onMapUpdate = onMapUpdate;
     }
 
     public void move(String move) throws IOException {
