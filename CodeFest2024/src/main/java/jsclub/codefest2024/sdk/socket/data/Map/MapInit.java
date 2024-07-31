@@ -4,14 +4,22 @@
  */
 package jsclub.codefest2024.sdk.socket.data.Map;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.Gson;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import jsclub.codefest2024.sdk.socket.SocketClient;
 import jsclub.codefest2024.sdk.socket.data.enemies.*;
 import jsclub.codefest2024.sdk.socket.data.equipments.*;
 import jsclub.codefest2024.sdk.socket.data.obstacles.*;
 import jsclub.codefest2024.sdk.socket.data.weapon.*;
-import jsclub.codefest2024.sdk.util.element.*;
+import jsclub.codefest2024.sdk.util.MsgPackUtil;
+import jsclub.codefest2024.sdk.util.element.ArmorUtil;
 
 /**
  *
@@ -31,21 +39,66 @@ public class MapInit {
     private List<HealingItem> healingItems;
     private List<Obstacle> obstacles;
     private List<Weapon> weapons;
+//    private Map<String,List> elements = new HashMap<>();
 
-    
+    private String serverUrl;
+    private SocketClient client;
+    private Socket socket;
+    private boolean connected;
+
     public MapInit() {
-        this.mapHeight=0;
-        this.mapWidth=0;
-        this.darkAreaWidth=0;
-        this.darkAreaHeight=0;
+        this.mapHeight = 0;
+        this.mapWidth = 0;
+        this.darkAreaWidth = 0;
+        this.darkAreaHeight = 0;
         this.indestructibles = null;
+        this.client = new SocketClient();
+        this.serverUrl = "http://localhost:3000";
+        this.connected = client.connectToServer(serverUrl);
+        if (connected) {
+            this.socket = client.getSocket();
+        }
     }
-    public MapInit(int mapHeight, int mapWidth, int darkAreaWidth, int darkAreaHeight, String[] walls) {
-        this.mapHeight=mapHeight;
-        this.mapWidth=mapWidth;
-        this.darkAreaWidth=darkAreaWidth;
-        this.darkAreaHeight=darkAreaHeight;
+
+    public MapInit(int mapHeight, int mapWidth, int darkAreaWidth, int darkAreaHeight, String[] walls, String serverUrl) {
+        this.mapHeight = mapHeight;
+        this.mapWidth = mapWidth;
+        this.darkAreaWidth = darkAreaWidth;
+        this.darkAreaHeight = darkAreaHeight;
         this.indestructibles = walls;
+        this.client = new SocketClient();
+        this.serverUrl = serverUrl;
+        this.connected = client.connectToServer(serverUrl);
+        this.socket = client.getSocket();
+    }
+
+    public void getDataFromServer() {
+        if (socket != null) {
+                socket.on("msgpack_event", new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        try {
+
+                            String data = MsgPackUtil.decode(args[0]);
+                            System.out.println("Received data: " + data);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
+        }
+
+
+    public void sendDataToServer(Object data) {
+            if (socket != null ) {
+                try {
+                    socket.emit("msgpack_event", (Object) MsgPackUtil.encodeFromObject(data));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
     }
 
     public int getMapHeight() {
@@ -154,6 +207,13 @@ public class MapInit {
 
     public void setChasers(List<Chaser> chasers) {
         this.chasers = chasers;
+    }
+
+
+    public static void main(String[] args) {
+        MapInit m = new MapInit();
+        m.getDataFromServer();
+        m.sendDataToServer(m.toString());
     }
 
 }

@@ -64,6 +64,10 @@ public class SocketClient {
         return true;
     }
 
+    public Socket getSocket() {
+        return this.socket;
+    }
+
     /**
      * Disconnects from the currently connected server.
      */
