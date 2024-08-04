@@ -15,12 +15,17 @@ public class Inventory {
     private Armor armor;
     private List<HealingItem> listHealingItem = new ArrayList<>();
 
+   /**
+   * constructor
+   * */
     public Inventory() {
-        // @Son
         // Set default value for melee is HAND
         this.melee = WeaponFactory.getWeaponById("HAND");
     }
 
+    /**
+    * getter and setter
+    * */
     public Weapon getGun() {
         return gun;
     }

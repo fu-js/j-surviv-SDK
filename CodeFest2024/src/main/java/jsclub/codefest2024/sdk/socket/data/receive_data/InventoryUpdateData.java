@@ -9,8 +9,7 @@ import com.google.gson.annotations.SerializedName;
 import jsclub.codefest2024.sdk.model.ElementType;
 
 /**
- *
- * @author Son Duong
+ * inventory update data from server
  */
 public class InventoryUpdateData {
 
