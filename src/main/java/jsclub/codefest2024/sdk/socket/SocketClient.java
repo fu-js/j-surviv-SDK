@@ -24,16 +24,30 @@ public class SocketClient {
             return;
         }
 
-        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                System.out.println("Connected to the server");
-                socket.on(EventName.ON_MAP_INIT, new onMapInit(gameMap));
-                socket.on(EventName.ON_INVENTORY_UPDATE, new onPlayerInventoryUpdate(heroInventory));
+        long startTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
+        final boolean[] connected = {false};
 
-                socket.on(EventName.ON_MAP_UPDATE, onMapUpdate);
-            }
-        });
+        while (endTime - startTime < 120 * 1000 && connected[0] == false) {
+            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    connected[0] = true;
+                    System.out.println("Connected to the server");
+                    socket.on(EventName.ON_MAP_INIT, new onMapInit(gameMap));
+                    socket.on(EventName.ON_INVENTORY_UPDATE, new onPlayerInventoryUpdate(heroInventory));
+
+                    socket.on(EventName.ON_MAP_UPDATE, onMapUpdate);
+                }
+            });
+
+            endTime = System.currentTimeMillis();
+        }
+
+        if (!connected[0]) {
+            System.out.println("Disconnected from the server");
+            return;
+        }
 
         socket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
             @Override
