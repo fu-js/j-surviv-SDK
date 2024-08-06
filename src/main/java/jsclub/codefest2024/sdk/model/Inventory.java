@@ -20,6 +20,9 @@ public class Inventory {
         this.melee = WeaponFactory.getWeaponById("HAND");
     }
 
+    /**
+     * setter and getter
+     * */
     public Weapon getGun() {
         return gun;
     }

@@ -20,6 +20,12 @@ public class onPlayerInventoryUpdate implements Emitter.Listener {
         this.heroInventory = heroInventory;
     }
 
+    /**
+     * receive data from server and update hero inventory
+     * @param  args The object to encode.
+     * @return void
+     * @throws IOException If an I/O error occurs.
+     */
     @Override
     public void call(Object... args) {
         try {

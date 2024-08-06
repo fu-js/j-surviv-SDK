@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import jsclub.codefest2024.sdk.model.ElementType;
 
+
+/**
+ * inventory data to update when receive message from server
+ * */
 public class InventoryUpdateData {
 
     @SerializedName("type")
