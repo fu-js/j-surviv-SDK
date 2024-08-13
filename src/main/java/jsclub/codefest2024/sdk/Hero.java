@@ -85,11 +85,11 @@ public class Hero {
         }
     }
 
-    public void throwItem(int itemId, int destinationX, int destinationY) throws IOException {
+    public void throwItem(int itemId, String direction) throws IOException {
         Socket socket = socketClient.getSocket();
 
         if (socket != null) {
-            PlayerThrowItemAction botThrow = new PlayerThrowItemAction(itemId, destinationX, destinationY);
+            PlayerThrowItemAction botThrow = new PlayerThrowItemAction(itemId, direction);
 
             byte[] bytes = MsgPackUtil.encodeFromObject(botThrow);
             socket.emit(EventName.EMIT_THROW, (Object) bytes);

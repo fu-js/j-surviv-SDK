@@ -2,15 +2,11 @@ package jsclub.codefest2024.sdk.socket.data.emit_data;
 
 import com.google.gson.annotations.SerializedName;
 
-public class PlayerThrowItemAction {
-    @SerializedName("item_id")
-    private int itemId;
-
+public class PlayerAttackAction {
     @SerializedName("direction")
     private String direction;
 
-    public PlayerThrowItemAction(int itemId, String direction) {
-        this.itemId = itemId;
+    public PlayerAttackAction(String direction) {
         this.direction = direction;
     }
 }
