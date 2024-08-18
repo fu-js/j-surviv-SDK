@@ -19,14 +19,14 @@ public class ShortestPath {
         int mapSize = gameMap.getMapSize();
         int darkAreaSize = gameMap.getDarkAreaSize();
 
-        ArrayList<ArrayList<Integer>> isRestrictedNodes = new ArrayList<>(mapSize + 1);
-        ArrayList<ArrayList<Integer>> g = new ArrayList<>(mapSize + 1);
-        ArrayList<ArrayList<Integer>> trace = new ArrayList<>(mapSize + 1);
+        ArrayList<ArrayList<Integer>> isRestrictedNodes = new ArrayList<>(mapSize * 2);
+        ArrayList<ArrayList<Integer>> g = new ArrayList<>(mapSize * 2);
+        ArrayList<ArrayList<Integer>> trace = new ArrayList<>(mapSize * 2);
 
         for (int i = 0; i < mapSize + 1; i++) {
-            isRestrictedNodes.add(new ArrayList<>(mapSize + 1));
-            g.add(new ArrayList<>(mapSize + 1));
-            trace.add(new ArrayList<>(mapSize + 1));
+            isRestrictedNodes.add(new ArrayList<>(mapSize * 2));
+            g.add(new ArrayList<>(mapSize * 2));
+            trace.add(new ArrayList<>(mapSize * 2));
 
             for (int j = 0; j < mapSize + 1; j++) {
                 isRestrictedNodes.get(i).add(0);
