@@ -6,7 +6,7 @@ public class EventName {
     public static final String ON_INVENTORY_UPDATE = "sdk:on-player-inventory-updated";
 
     public static final String EMIT_JOIN_GAME = "sdk:join-game";
-    public static final String EMIT_MOVE = "skd:move";
+    public static final String EMIT_MOVE = "sdk:move";
     public static final String EMIT_SHOOT = "sdk:shoot";
     public static final String EMIT_ATTACK = "sdk:attack";
     public static final String EMIT_THROW = "sdk:throw";

@@ -19,7 +19,7 @@ public class Hero {
     private final Inventory inventory;
     private Emitter.Listener onMapUpdate;
 
-    public Hero(String playerName, String gameID) {
+    public Hero(String gameID, String playerName) {
         this.playerName = playerName;
         this.gameID = gameID;
         this.gameMap = new GameMap();
@@ -85,11 +85,11 @@ public class Hero {
         }
     }
 
-    public void throwItem(int itemId, String direction) throws IOException {
+    public void throwItem(String direction) throws IOException {
         Socket socket = socketClient.getSocket();
 
         if (socket != null) {
-            PlayerThrowItemAction botThrow = new PlayerThrowItemAction(itemId, direction);
+            PlayerThrowItemAction botThrow = new PlayerThrowItemAction(direction);
 
             byte[] bytes = MsgPackUtil.encodeFromObject(botThrow);
             socket.emit(EventName.EMIT_THROW, (Object) bytes);

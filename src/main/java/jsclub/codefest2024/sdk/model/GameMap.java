@@ -15,8 +15,6 @@ import jsclub.codefest2024.sdk.socket.data.receive_data.MapData;
 import jsclub.codefest2024.sdk.util.MsgPackUtil;
 
 public class GameMap {
-    private final Gson gson = new Gson();
-
     private int mapSize = 0;
     private int darkAreaSize = 0;
     private List<Obstacle> listIndestructibleObstacles = new ArrayList<>();
@@ -34,6 +32,7 @@ public class GameMap {
 
     public void updateOnInitMap(Object arg) {
         try {
+            Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
             MapData mapData = gson.fromJson(message, MapData.class);
 
@@ -52,6 +51,7 @@ public class GameMap {
 
     public void updateOnUpdateMap(Object arg) {
         try {
+            Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
             MapData mapData = gson.fromJson(message, MapData.class);
 
@@ -284,6 +284,4 @@ public class GameMap {
     public String toString() {
         return new Gson().toJson(this);
     }
-
-
 }
