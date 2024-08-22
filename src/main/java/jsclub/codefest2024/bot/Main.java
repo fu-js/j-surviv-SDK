@@ -17,7 +17,7 @@ import java.util.List;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "148660";
+    private static final String GAME_ID = "128296";
     private static final String PLAYER_NAME = "ptd";
 
 
