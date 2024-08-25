@@ -17,11 +17,13 @@ public class onPlayerInventoryUpdate implements Emitter.Listener {
     Gson gson = new Gson();
 
     public onPlayerInventoryUpdate(Inventory heroInventory) {
+        System.out.println("hero inventory: " + heroInventory);
         this.heroInventory = heroInventory;
     }
 
     @Override
     public void call(Object... args) {
+        System.out.println("update inventory");
         try {
             String message = MsgPackUtil.decode(args[0]);
             InventoryUpdateData inventoryUpdateData = gson.fromJson(message, InventoryUpdateData.class);
@@ -29,6 +31,7 @@ public class onPlayerInventoryUpdate implements Emitter.Listener {
             ElementType type = inventoryUpdateData.itemType;
             String id = inventoryUpdateData.id;
             String action = inventoryUpdateData.action;
+            System.out.println("info: " + type + " " + id + " " + action);
             switch (action) {
                 case "ADD":
                     switch (type) {

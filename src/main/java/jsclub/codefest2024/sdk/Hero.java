@@ -32,18 +32,19 @@ public class Hero {
             throw new RuntimeException("onMapUpdate is not set");
         }
 
-        socketClient.connectToServer(serverURL + "/sdk", this.onMapUpdate);
+        socketClient.connectToServer(serverURL + "/sdk", this.onMapUpdate, this);
         this.joinGame();
     }
 
     public String getPlayerID() {
         return playerName;
     }
+
     public String getGameID() {
         return gameID;
     }
 
-    public void joinGame() throws IOException{
+    public void joinGame() throws IOException {
         Socket socket = socketClient.getSocket();
 
         if (socket != null) {
