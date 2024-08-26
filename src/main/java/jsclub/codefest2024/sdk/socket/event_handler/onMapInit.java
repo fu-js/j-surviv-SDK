@@ -7,7 +7,6 @@ public class onMapInit implements Emitter.Listener {
     private final GameMap gameMap;
 
     public onMapInit(GameMap gameMap) {
-        System.out.println("onMapInit");
         this.gameMap = gameMap;
     }
 

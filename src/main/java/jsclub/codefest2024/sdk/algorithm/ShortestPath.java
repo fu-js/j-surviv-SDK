@@ -21,8 +21,6 @@ public class ShortestPath {
         int darkAreaSize = gameMap.getDarkAreaSize();
         List<Obstacle> listIndestructibleObstacles = gameMap.getListIndestructibleObstacles();
         List<Obstacle> listChests = gameMap.getListChests();
-        System.out.println("mapSize: " + mapSize);
-        System.out.println("darkAreaSize: " + darkAreaSize);
         System.out.println("cur node: " + current.x + ' ' + current.y);
         System.out.println("target node: " + target.x + ' ' + target.y);
         ArrayList<ArrayList<Integer>> isRestrictedNodes = new ArrayList<>(mapSize + 5);
