@@ -1,24 +1,24 @@
 package jsclub.codefest2024.bot;
 
 import io.socket.emitter.Emitter;
+import jsclub.codefest2024.sdk.algorithm.Distance;
 import jsclub.codefest2024.sdk.algorithm.ShortestPath;
 import jsclub.codefest2024.sdk.base.Node;
 import jsclub.codefest2024.sdk.model.GameMap;
 import jsclub.codefest2024.sdk.Hero;
+import jsclub.codefest2024.sdk.model.obstacles.Obstacle;
 import jsclub.codefest2024.sdk.model.players.Player;
 import jsclub.codefest2024.sdk.model.weapon.Weapon;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class Main {
     private static final String SERVER_URL = "https://cf-server.jsclub.dev";
-    private static final String GAME_ID = "170409";
-    private static final String PLAYER_NAME = "ptd";
-
-    static String p = "urrl";
-
-    private static long lastCallTime = 0;  // External variable to track time across calls
+    private static final String GAME_ID = "198163";
+    private static final String PLAYER_NAME = "top1";
 
     public static String randomMove() {
         String[] moves = {"u", "d", "l", "r"};
@@ -31,38 +31,54 @@ public class Main {
         Emitter.Listener onMapUpdate = new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                long currentTime = System.currentTimeMillis();
-                if (lastCallTime != 0) {
-                    long timeDifference = currentTime - lastCallTime;
-                    //System.out.println("Time between calls: " + timeDifference + " ms");
-                }
-                lastCallTime = currentTime;  // Update the last call time
 
                 try {
                     GameMap gameMap = hero.getGameMap();
                     gameMap.updateOnUpdateMap(args[0]);
 
                     Player player = gameMap.getCurrentPlayer();
-                    Weapon target = null;
-                    double distance = 10000000;
-                    for (Weapon weapon : gameMap.getAllGun()) {
-                        if (distance > Math.sqrt(
-                                (player.x - weapon.x) * (player.x - weapon.x)
-                                + (player.y - weapon.y) * (player.y - weapon.y)
-                        )) {
-                            distance = (player.x - weapon.x) * (player.x - weapon.x)
-                                    + (player.y - weapon.y) * (player.y - weapon.y);
-                            target = weapon;
-                        }
+                    List<Weapon> gunList = gameMap.getAllGun();
+                    List<Obstacle> restricedList = gameMap.getListIndestructibleObstacles();
+                    restricedList.addAll(gameMap.getListChests());
+                    restricedList.addAll(gameMap.getListTraps());
+
+                    Node currentNode = new Node(player.getX(), player.getY());
+                    List<Node> gunNodes = new ArrayList<>();
+                    List<Node> restrictedNodes = new ArrayList<>();
+                    for (Weapon gun : gunList) {
+                        gunNodes.add(new Node(gun.getX(), gun.getY()));
                     }
 
-                    hero.move(ShortestPath.getShortestPath(
-                            gameMap,
-                            List.of(),
-                            player,
-                            target,
-                            false
-                    ));
+                    Node nearestGun = Distance.nearestNode(currentNode, gunNodes);
+
+                    for (Obstacle o : restricedList) {
+                        restrictedNodes.add(new Node(o.getX(), o.getY()));
+                    }
+
+                    boolean pickedUpGun = false;
+                    if (currentNode.getX() == nearestGun.getX() && currentNode.getY() == nearestGun.getY() && pickedUpGun == false) {
+                        pickedUpGun = true;
+                    } else {
+                        hero.move(ShortestPath.getShortestPath(gameMap, restrictedNodes, currentNode, nearestGun, false));
+                    }
+
+                    if(pickedUpGun){
+                        hero.pickupItem();
+                    }
+                    boolean randMove = false;
+                    boolean randShoot = true;
+                    if (pickedUpGun == true) {
+                        if (randShoot == true) {
+                            hero.shoot(randomMove());
+                            randShoot = false;
+                            randMove = true;
+                        }
+                        if (randMove == true) {
+                            hero.move(randomMove());
+                            randMove = false;
+                            randShoot = true;
+                        }
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
