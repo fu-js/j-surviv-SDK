@@ -59,4 +59,15 @@ public class Inventory {
     public void setArmor(Armor armor) {
         this.armor = armor;
     }
+
+    @Override
+    public String toString() {
+        return "Inventory{" +
+                "gun=" + gun +
+                ", melee=" + melee +
+                ", listThrowable=" + listThrowable +
+                ", armor=" + armor +
+                ", listHealingItem=" + listHealingItem +
+                '}';
+    }
 }
