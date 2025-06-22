@@ -161,7 +161,7 @@ public class Hero {
     public void shoot(String direction) throws IOException {
         Socket socket = socketClient.getSocket();
 
-        if (direction.isEmpty() || direction == null) {
+        if (direction == null || direction.isEmpty()) {
             System.out.println("DEBUG FROM SDK shoot ERROR : direction is null or empty");
             return;
         }
@@ -197,7 +197,7 @@ public class Hero {
     public void attack(String direction) throws IOException {
         Socket socket = socketClient.getSocket();
 
-        if (direction.isEmpty() || direction == null) {
+        if (direction == null || direction.isEmpty()) {
             System.out.println("DEBUG FROM SDK attack ERROR : direction is null or empty");
             return;
         }
@@ -231,7 +231,7 @@ public class Hero {
     public void throwItem(String direction, int distance) throws IOException {
         Socket socket = socketClient.getSocket();
 
-        if (direction.isEmpty() || direction == null) {
+        if (direction == null || direction.isEmpty()) {
             System.out.println("DEBUG FROM SDK throwItem ERROR : direction is null or empty");
             return;
         }
@@ -340,7 +340,7 @@ public class Hero {
     public void revokeItem(String itemId) throws IOException {
         Socket socket = socketClient.getSocket();
 
-        if (itemId.isEmpty() || itemId == null) {
+        if (itemId == null || itemId.isEmpty()) {
             System.out.println("DEBUG FROM SDK revokeItem ERROR : itemId is null or empty");
             return;
         }
