@@ -50,20 +50,20 @@ public class PathUtils {
         int safeZone = gameMap.getSafeZone();
 
 
-        List<Obstacle> canGoThroughList = gameMap.getObstaclesByTag("CAN_GO_THROUGH");
-        List<Node> canGoThroughNodes = new ArrayList<>();
-        for(Obstacle o:canGoThroughList) {
-            canGoThroughNodes.add(new Node(o.getX(), o.getY()));
-        }
+//        List<Obstacle> canGoThroughList = gameMap.getObstaclesByTag("CAN_GO_THROUGH");
+//        System.out.println("CAN GO THROUGH LIST: " + canGoThroughList);
+//        List<Node> canGoThroughNodes = new ArrayList<>();
+//        for(Obstacle o:canGoThroughList) {
+//            canGoThroughNodes.add(new Node(o.getX(), o.getY()));
+//        }
 
-        List<Obstacle> listIndestructibleObstacles = gameMap.getListObstacles();
-        List<Node> listIndestructibleNodes = new ArrayList<>(listIndestructibleObstacles);
-//        listIndestructibleNodes.addAll(listIndestructibleObstacles);
+//        List<Obstacle> listIndestructibleObstacles = gameMap.getListObstacles();
+        //        listIndestructibleNodes.addAll(listIndestructibleObstacles);
 //        for(Obstacle o:listIndestructibleObstacles) {
 //            listIndestructibleNodes.add(o);
 //        }
-        listIndestructibleNodes.removeAll(canGoThroughNodes);
-        listIndestructibleNodes.addAll(restrictedNodes);
+
+        List<Node> listIndestructibleNodes = new ArrayList<>(restrictedNodes);
 
         ArrayList<ArrayList<Integer>> isRestrictedNodes = new ArrayList<>(mapSize + 5);
         ArrayList<ArrayList<Integer>> g = new ArrayList<>(mapSize + 5);
