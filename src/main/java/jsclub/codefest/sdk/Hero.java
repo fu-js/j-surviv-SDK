@@ -308,7 +308,7 @@ public class Hero {
         HealingItem item = HealingItemFactory.getHealingItemById(itemId);
         int indexOfItem = getInventory().getListHealingItem().indexOf(item);
 
-        if (itemId.isEmpty() || itemId == null) {
+        if (itemId == null || itemId.isEmpty()) {
             System.out.println("DEBUG FROM SDK useItem ERROR : itemId is null or empty");
             return;
         }
