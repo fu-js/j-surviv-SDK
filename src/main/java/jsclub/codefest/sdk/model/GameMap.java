@@ -21,6 +21,7 @@ public class GameMap {
     private int safeZone = 0;
     private List<Obstacle> listIndestructibleObstacles = new ArrayList<>();
     private List<Obstacle> listObstacles = new ArrayList<>();
+    private List<Obstacle> listObstaclesInit = new ArrayList<>();
     private List<Enemy> listEnemies = new ArrayList<>();
     private List<Ally> listAllies = new ArrayList<>();
     private List<Weapon> listWeapons = new ArrayList<>();
@@ -45,8 +46,9 @@ public class GameMap {
     public void updateOnInitMap(Object arg) {
         try {
             Gson gson = new Gson();
+            System.out.println("MAP IS INIT");
             String message = MsgPackUtil.decode(arg);
-//            System.out.println("game map init:"+ message);
+            System.out.println("game map init:"+ message);
             MapData mapData = gson.fromJson(message, MapData.class);
             setMapSize(mapData.mapSize);
 
@@ -56,7 +58,7 @@ public class GameMap {
                 Obstacle obstacle = ObstacleFactory.getObstacle(o.getId(), o.x, o.y);
                 newListObstacles.add(obstacle);
             }
-            setListObstacles(newListObstacles);
+            setListObstaclesInit(newListObstacles);
 
 //            System.out.println("mapData"+getListObstacles());
         } catch (CloneNotSupportedException | IOException e) {
@@ -359,6 +361,14 @@ public class GameMap {
 
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
+    }
+
+    public List<Obstacle> getListObstaclesInit() {
+        return listObstaclesInit;
+    }
+
+    public void setListObstaclesInit(List<Obstacle> listObstaclesInit) {
+        this.listObstaclesInit = listObstaclesInit;
     }
 
     @Override

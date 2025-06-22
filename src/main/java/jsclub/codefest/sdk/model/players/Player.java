@@ -56,8 +56,8 @@ public class Player extends Element {
 //        return inventory;
 //    }
 
-    public List<ItemData> getInventory(){
-        return inventory;
+    public Inventory getInventory(){
+        return new Inventory(inventory);
     }
 
     public List<String> getCanBeSeenBy() {

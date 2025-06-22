@@ -36,11 +36,11 @@ public class SocketClient {
 
             socket.onAnyIncoming((event) -> {
                 System.out.println("Received event: " + new Gson().toJson(event[0]));
-//                try {
-//                    System.out.println("event data: " + new Gson().toJson(MsgPackUtil.decode((Object) event[1])));
-//                } catch (IOException ex) {
-//                    System.err.println("error:" + ex);
-//                }
+                try {
+                    System.out.println("event data: " + new Gson().toJson(MsgPackUtil.decode((Object) event[1])));
+                } catch (IOException ex) {
+                    System.err.println("error:" + ex);
+                }
             });
 
             socket.on(EventName.ON_MAP_INIT, new onMapInit(gameMap));
