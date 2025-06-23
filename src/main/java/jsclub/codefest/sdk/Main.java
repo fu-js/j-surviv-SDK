@@ -14,9 +14,9 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server-staging.jsclub.dev";
-    private static final String GAME_ID = "147714";
+    private static final String GAME_ID = "120154";
     private static final String PLAYER_NAME = "lily";
-    private static final String SECRET_KEY = "sk-_1cbwgEAQ_-1nRK0TsThqw:sfTqg9SnxrLE38umH71MTWzl0emAQWli6-aO4UaxWOQjrBxRhQjh--hi3yqGRP93pwMGn9Muw6WLWHLTRAxOpQ";
+    private static final String SECRET_KEY = "sk-7YLsiWMySB-d_CgInug_mw:kdeAyOViSRxixQCj4VgYfiT1TJpg5AVbUgrcNonekN0ib9zSHrDTO-L3nKc9GKA40rlFjBT10C_dftiVuMaj1Q";
 
     public static final int STUCK_LIMIT = 4;
     public static final int DODGE_RANGE = 3;
@@ -70,6 +70,8 @@ class MapUpdateListener implements Emitter.Listener {
             } else {
                 handleCombat(nearestPlayer, nodesToAvoid, player);
             }
+
+            System.out.println("game map: "+ gameMap);
 
 
         } catch (Exception e) {

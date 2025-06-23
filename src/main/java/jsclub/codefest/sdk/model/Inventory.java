@@ -25,11 +25,14 @@ public class Inventory
     private List<HealingItem> listHealingItem = new ArrayList<>();
 
     public Inventory(List<ItemData> items) {
+        boolean hasMelee = false;
         for (ItemData n : items) {
             if (n.getType().equals(ElementType.GUN))
                 this.gun = WeaponFactory.getWeaponById(n.getID());
-            if (n.getType().equals(ElementType.MELEE))
+            if (n.getType().equals(ElementType.MELEE)) {
                 this.melee =  WeaponFactory.getWeaponById(n.getID());
+                hasMelee = true;
+            }
             if (n.getType().equals(ElementType.THROWABLE))
                 this.throwable =  WeaponFactory.getWeaponById(n.getID());
             if (n.getType().equals(ElementType.SPECIAL))
@@ -46,6 +49,9 @@ public class Inventory
             }
         }
 
+        if (!hasMelee) {
+            this.melee = WeaponFactory.getWeaponById("HAND");
+        }
     }
 
     public Inventory() {

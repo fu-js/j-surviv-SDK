@@ -1,6 +1,9 @@
 package jsclub.codefest.sdk.model.players;
 
 import com.google.gson.annotations.SerializedName;
+import jsclub.codefest.sdk.factory.ArmorFactory;
+import jsclub.codefest.sdk.factory.HealingItemFactory;
+import jsclub.codefest.sdk.factory.WeaponFactory;
 import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
 import jsclub.codefest.sdk.model.Inventory;
@@ -24,6 +27,7 @@ public class Player extends Element {
 
     public Player() {
         setType(ElementType.PLAYER);
+        this.getInventory().setMelee(WeaponFactory.getWeaponById("HAND"));
     }
 
     public String getID() {
@@ -39,14 +43,7 @@ public class Player extends Element {
     }
 
     public Inventory getInventory() {
-        return new Inventory(inventory);
+        return new Inventory(this.inventory);
     }
 
-    public List<String> getCanBeSeenBy() {
-        return canBeSeenBy;
-    }
-
-    public List<Effect> getEffects() {
-        return effects;
-    }
 }

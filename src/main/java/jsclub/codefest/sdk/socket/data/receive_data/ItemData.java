@@ -20,6 +20,12 @@ public class ItemData {
     @SerializedName("attributes")
     public Object attributes;
 
+    public ItemData(String ID, ElementType type) {
+        this.ID = ID;
+        this.type = type;
+    }
+
+
     public ElementType getType() {
         return type;
     }

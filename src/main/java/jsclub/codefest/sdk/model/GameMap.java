@@ -79,6 +79,7 @@ public class GameMap {
         try {
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
+            System.out.println("message:" + message);
             MapData mapData = gson.fromJson(message, MapData.class);
             System.out.println(mapData);
             List<Obstacle> newListObstacles = new ArrayList<>();
@@ -153,10 +154,10 @@ public class GameMap {
             setListWeapons(newListWeapons);
             setListHealingItems(newListHealingItem);
             setListArmors(newListArmor);
-            
-            // setListBullets(mapData.listBullets);
-            setOtherPlayerInfo(mapData.otherPlayers);
+
             setCurrentPlayer(mapData.currentPlayer);
+            setOtherPlayerInfo(mapData.otherPlayers);
+
 
 //            if (!currentPlayer.getIsAlive()) {
 //                this.heroInventory.reset();
