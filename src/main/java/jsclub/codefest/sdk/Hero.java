@@ -176,11 +176,14 @@ public class Hero {
             return;
         }
 
-        if (socket == null || getInventory().getGun() == null) {
+        if (getInventory().getGun() == null) {
             System.out.println("DEBUG FROM SDK shoot ERROR : Socket is null or inventory does not have gun");
             return;
         }
-
+        if (socket == null) {
+            System.out.println("DEBUG FROM SDK shoot ERROR : Socket is null or inventory does not have gun");
+            return;
+        }
         PlayerShootAction botShoot = new PlayerShootAction(direction);
         byte[] bytes = MsgPackUtil.encodeFromObject(botShoot);
         socket.emit(EventName.EMIT_SHOOT, (Object) bytes);
