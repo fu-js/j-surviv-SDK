@@ -18,8 +18,8 @@ public class Player extends Element {
     private Float health;
     @SerializedName("score")
     private int score;
-    @SerializedName("inventory")
-    private List<ItemData> inventory;
+//    @SerializedName("inventory")
+//    private List<ItemData> inventory;
     @SerializedName("canBeSeenBy")
     private List<String> canBeSeenBy;
     @SerializedName("effects")
@@ -27,7 +27,6 @@ public class Player extends Element {
 
     public Player() {
         setType(ElementType.PLAYER);
-        this.getInventory().setMelee(WeaponFactory.getWeaponById("HAND"));
     }
 
     public String getID() {
@@ -42,8 +41,8 @@ public class Player extends Element {
         return score;
     }
 
-    public Inventory getInventory() {
-        return new Inventory(this.inventory);
-    }
+//    public Inventory getInventory() {
+//        return new Inventory(this.inventory);
+//    }
 
 }

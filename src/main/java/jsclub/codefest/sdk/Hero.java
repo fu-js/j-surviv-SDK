@@ -6,6 +6,7 @@ import jsclub.codefest.sdk.base.Node;
 import jsclub.codefest.sdk.factory.HealingItemFactory;
 import jsclub.codefest.sdk.model.GameMap;
 import jsclub.codefest.sdk.model.Inventory;
+import jsclub.codefest.sdk.model.effects.Effect;
 import jsclub.codefest.sdk.model.equipments.HealingItem;
 import jsclub.codefest.sdk.model.weapon.Weapon;
 import jsclub.codefest.sdk.socket.EventName;
@@ -13,10 +14,8 @@ import jsclub.codefest.sdk.socket.SocketClient;
 import jsclub.codefest.sdk.socket.data.emit_data.*;
 import jsclub.codefest.sdk.util.MsgPackUtil;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class Hero {
     private String playerName = "";
@@ -25,6 +24,7 @@ public class Hero {
     private final SocketClient socketClient;
     private final GameMap gameMap;
     private final Inventory inventory;
+    private final List<Effect> effects;
     private Emitter.Listener onMapUpdate;
 
     public Hero(String gameID, String playerName, String secretKey) {
@@ -32,8 +32,13 @@ public class Hero {
         this.gameID = gameID;
         this.secretKey = secretKey;
         this.inventory = new Inventory();
-        this.gameMap = new GameMap(this.getInventory());
-        this.socketClient = new SocketClient(this.inventory, this.gameMap);
+        this.effects = new ArrayList<>();
+        this.gameMap = new GameMap(this.getInventory(), this.getEffects());
+        this.socketClient = new SocketClient(this.inventory, this.effects, this.gameMap);
+    }
+
+    public List<Effect> getEffects() {
+        return effects;
     }
 
     public void start(String serverURL) throws IOException {

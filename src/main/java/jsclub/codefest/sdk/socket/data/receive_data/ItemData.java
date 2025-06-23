@@ -17,22 +17,8 @@ public class ItemData {
     @SerializedName("durability")
     public Long durability;
 
-    @SerializedName("attributes")
-    public Object attributes;
-
-    public ItemData(String ID, ElementType type) {
-        this.ID = ID;
-        this.type = type;
-    }
-
-
-    public ElementType getType() {
-        return type;
-    }
-
-    public String getID() {
-        return ID;
-    }
+//    @SerializedName("attributes")
+//    public Object attributes;
 
     @Override
     public String toString() {

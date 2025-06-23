@@ -1,22 +1,26 @@
 package jsclub.codefest.sdk.model;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.Gson;
-import jsclub.codefest.sdk.base.Node;
 import jsclub.codefest.sdk.factory.*;
-import jsclub.codefest.sdk.model.npcs.*;
-import jsclub.codefest.sdk.model.equipments.*;
-import jsclub.codefest.sdk.model.obstacles.*;
+import jsclub.codefest.sdk.model.effects.Effect;
+import jsclub.codefest.sdk.model.equipments.Armor;
+import jsclub.codefest.sdk.model.equipments.HealingItem;
+import jsclub.codefest.sdk.model.npcs.Ally;
+import jsclub.codefest.sdk.model.npcs.Enemy;
+import jsclub.codefest.sdk.model.obstacles.Obstacle;
+import jsclub.codefest.sdk.model.obstacles.ObstacleTag;
 import jsclub.codefest.sdk.model.players.Player;
-import jsclub.codefest.sdk.model.weapon.*;
+import jsclub.codefest.sdk.model.weapon.Bullet;
+import jsclub.codefest.sdk.model.weapon.Weapon;
 import jsclub.codefest.sdk.socket.data.receive_data.Entity;
 import jsclub.codefest.sdk.socket.data.receive_data.MapData;
 import jsclub.codefest.sdk.util.MsgPackUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameMap {
     private static final Logger log = LogManager.getLogger(GameMap.class);
@@ -35,10 +39,12 @@ public class GameMap {
     private List<Player> otherPlayerInfo = new ArrayList<>();
     private Player currentPlayer;
     private Inventory heroInventory;
+    private List<Effect> heroEffect;
 
 
-    public GameMap(Inventory heroInventory) {
+    public GameMap(Inventory heroInventory, List<Effect> heroEffect) {
         this.heroInventory = heroInventory;
+        this.heroEffect = heroEffect;
     }
 
     /**
@@ -158,10 +164,10 @@ public class GameMap {
             setCurrentPlayer(mapData.currentPlayer);
             setOtherPlayerInfo(mapData.otherPlayers);
 
-
-//            if (!currentPlayer.getIsAlive()) {
-//                this.heroInventory.reset();
-//            }
+            if (currentPlayer.getHealth() <= 0) {
+                this.heroInventory.reset();
+                this.heroEffect.clear();
+            }
         } catch (CloneNotSupportedException | IOException e) {
             throw new RuntimeException(e);
         }

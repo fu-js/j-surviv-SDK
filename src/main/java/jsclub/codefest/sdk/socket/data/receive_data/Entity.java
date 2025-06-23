@@ -19,8 +19,8 @@ public class Entity {
     @SerializedName("type")
     public ElementType type;
 
-    @SerializedName("attributes")
-    public Object attributes;
+//    @SerializedName("attributes")
+//    public Object attributes;
 
     @Override
     public String toString() {

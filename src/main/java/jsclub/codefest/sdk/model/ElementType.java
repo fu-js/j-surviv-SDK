@@ -16,5 +16,4 @@ public enum ElementType {
     TRAP,
     ROAD,
     BULLET,
-    BUILDING
 }

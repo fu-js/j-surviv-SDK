@@ -23,8 +23,8 @@ public class Block {
     @SerializedName("tags")
     public List<ObstacleTag> tags;
 
-    @SerializedName("attributes")
-    public List<Object> attributes;
+//    @SerializedName("attributes")
+//    public List<Object> attributes;
 
     @Override
     public String toString() {
