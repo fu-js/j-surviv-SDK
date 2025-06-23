@@ -2,7 +2,9 @@ package jsclub.codefest.sdk.socket.event_handler;
 
 import com.google.gson.Gson;
 import io.socket.emitter.Emitter;
+import jsclub.codefest.sdk.factory.EffectFactory;
 import jsclub.codefest.sdk.model.effects.Effect;
+import jsclub.codefest.sdk.socket.data.receive_data.EffectClearData;
 import jsclub.codefest.sdk.util.MsgPackUtil;
 
 import java.io.IOException;
@@ -20,9 +22,10 @@ public class onPlayerEffectClear implements Emitter.Listener {
     public void call(Object... args) {
         try {
             String message = MsgPackUtil.decode(args[0]);
-            Effect effect = gson.fromJson(message, Effect.class);
-            System.out.println("Effect cleared: " + effect.getId());
-            effects.remove(effect);
+            //{"effectId":"STUN"}
+            EffectClearData effect = gson.fromJson(message, EffectClearData.class);
+            System.out.println("Effect cleared: " + effect.effectId);
+            effects.remove(EffectFactory.getEffects(effect.effectId));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
