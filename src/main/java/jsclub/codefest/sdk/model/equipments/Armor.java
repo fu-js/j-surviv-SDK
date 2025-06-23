@@ -9,16 +9,16 @@ import java.util.Arrays;
 
 public class Armor extends Element {
     private final int damageReduce;
-    private final int healthPoint;
+    private final double healthPoint;
 
-    public Armor(String id, ElementType type, int rarity, int healthPoint, int damageReduce) {
+    public Armor(String id, ElementType type, int rarity, double healthPoint, int damageReduce) {
         super(id);
         this.damageReduce = damageReduce;
         this.healthPoint = healthPoint;
         this.setType(type);
     }
 
-    public int getHealthPoint() {
+    public double getHealthPoint() {
         return healthPoint;
     }
 
