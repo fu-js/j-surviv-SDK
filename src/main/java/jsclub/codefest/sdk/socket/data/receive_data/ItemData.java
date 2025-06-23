@@ -15,7 +15,7 @@ public class ItemData {
     public int level;
 
     @SerializedName("durability")
-    public int durability;
+    public Long durability;
 
     @SerializedName("attributes")
     public Object attributes;

@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>20</maven.compiler.source>
         <maven.compiler.target>20</maven.compiler.target>
-        <exec.mainClass>jsclub.codefest2024.CodeFest2024</exec.mainClass>
+        <exec.mainClass>jsclub.codefest.CodeFest</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
@@ -23,6 +23,11 @@
             <artifactId>log4j-api</artifactId>
             <version>2.23.1</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.23.1</version> <type>jar</type>
         </dependency>
         <dependency>
             <groupId>io.socket</groupId>

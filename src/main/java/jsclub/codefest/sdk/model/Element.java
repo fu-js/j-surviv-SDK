@@ -26,6 +26,10 @@ public class Element extends Node implements Cloneable {
         return type;
     }
 
+    public Node getPosition() {
+        return new Node(this.x, this.y);
+    }
+
     public void setId(String id) {
         this.id = id;
     }

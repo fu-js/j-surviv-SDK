@@ -34,14 +34,14 @@ public class SocketClient {
         socket.on(Socket.EVENT_CONNECT, args -> {
             System.out.println("Connected to the server");
 
-            socket.onAnyIncoming((event) -> {
-                System.out.println("Received event: " + new Gson().toJson(event[0]));
+//            socket.onAnyIncoming((event) -> {
+//                System.out.println("Received event: " + new Gson().toJson(event[0]));
 //                try {
 //                    System.out.println("event data: " + new Gson().toJson(MsgPackUtil.decode((Object) event[1])));
 //                } catch (IOException ex) {
 //                    System.err.println("error:" + ex);
 //                }
-            });
+//            });
 
             socket.on(EventName.ON_MAP_INIT, new onMapInit(gameMap));
             socket.on(EventName.ON_MAP_UPDATE, onMapUpdate);

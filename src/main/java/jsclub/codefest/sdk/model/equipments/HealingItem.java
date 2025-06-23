@@ -3,10 +3,7 @@ package jsclub.codefest.sdk.model.equipments;
 import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
 import jsclub.codefest.sdk.model.effects.Effect;
-
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 public class HealingItem extends Element {
     private int rarity;
@@ -15,10 +12,10 @@ public class HealingItem extends Element {
     private final int healingHP;
     private final double usageTime;
     private final int point;
-    private ArrayList<Effect> effects;
+    private List<Effect>  effects;
 
 
-    public HealingItem(String id, ElementType type, int rarity, double usageTime, int healingHp, int duration, int point, Effect... effects) {
+    public HealingItem(String id, ElementType type, int rarity, double usageTime, int healingHp, int duration, int point, List<Effect> effects) {
         super(id);
         this.rarity = rarity;
         this.duration = duration;
@@ -27,7 +24,7 @@ public class HealingItem extends Element {
         this.point = point;
 
         this.setType(type);
-        this.effects = new ArrayList<>(Arrays.asList(effects));
+        this.effects = effects;
     }
 
     public int getHealingHP() {
@@ -46,7 +43,7 @@ public class HealingItem extends Element {
         return rarity;
     }
 
-    public ArrayList<Effect> getEffects() {
+    public List<Effect>  getEffects() {
         return effects;
     }
 

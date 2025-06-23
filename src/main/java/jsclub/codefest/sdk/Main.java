@@ -1,43 +1,40 @@
 package jsclub.codefest.sdk;
 
-
 import io.socket.emitter.Emitter;
 import jsclub.codefest.sdk.algorithm.PathUtils;
 import jsclub.codefest.sdk.base.Node;
 import jsclub.codefest.sdk.model.GameMap;
-import jsclub.codefest.sdk.model.obstacles.Obstacle;
 import jsclub.codefest.sdk.model.players.Player;
 import jsclub.codefest.sdk.model.weapon.Weapon;
-
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
 public class Main {
     private static final String SERVER_URL = "https://cf25-server-staging.jsclub.dev";
-    private static final String GAME_ID = "196388";
+    private static final String GAME_ID = "113706";
     private static final String PLAYER_NAME = "lily";
-    private static final String SECRET_KEY = "sk-qg_PU4LVSjayxzhWKLhYoA:ugsmwXKvksR3VqxK7_QeXMmew3zFq6Yghiicc_4uJX1StuTROImu9kguOQKj0TeHa4wD-5MCu5-PDUwLjLTYTg";
+    private static final String SECRET_KEY = "sk-_1cbwgEAQ_-1nRK0TsThqw:sfTqg9SnxrLE38umH71MTWzl0emAQWli6-aO4UaxWOQjrBxRhQjh--hi3yqGRP93pwMGn9Muw6WLWHLTRAxOpQ";
 
+    public static final int STUCK_LIMIT = 4;
+    public static final int DODGE_RANGE = 3;
 
     public static void main(String[] args) throws IOException {
         Hero hero = new Hero(GAME_ID, PLAYER_NAME, SECRET_KEY);
-
 
         Emitter.Listener onMapUpdate = new Emitter.Listener() {
             private int stuckCounter = 0;
             private Node lastPosition = new Node(-1, -1); // Vị trí ở lần chạy trước
             private static final int STUCK_LIMIT = 4; // Ngưỡng nhận diện bị kẹt
 
-
             @Override
             public void call(Object... args) {
                 try {
                     // --- BƯỚC 0: KIỂM TRA AN TOÀN VÀ CẬP NHẬT TRẠNG THÁI ---
-                    if (args == null || args.length == 0) return;
+                    if (args == null || args.length == 0)
+                        return;
 
                     GameMap gameMap = hero.getGameMap();
                     gameMap.updateOnUpdateMap(args[0]);
@@ -55,17 +52,16 @@ public class Main {
                     restrictedNodes.removeAll(canGoThroughs);
                     restrictedNodes.addAll(traps);
 
-                    //restricted with other players
+                    // restricted with other players
                     List<Node> restrictedNodeWithOtherPlayers = new ArrayList<>(restrictedNodes);
                     restrictedNodeWithOtherPlayers.addAll(otherPlayers);
 
-                    /////////////----algorithm-----////////////
+                    ///////////// ----algorithm-----////////////
 
-                    if (player == null || player.getHealth() ==0) {
+                    if (player == null || player.getHealth() == 0) {
                         System.out.println("Nhân vật đã chết hoặc chưa có dữ liệu.");
                         return;
                     }
-
 
                     // --- BƯỚC 1: XỬ LÝ CHỐNG KẸT (ANTI-STUCK) ---
                     if (isStuck(player)) {
@@ -76,7 +72,6 @@ public class Main {
                     }
                     updateLastPosition(player);
 
-
                     if (stuckCounter > STUCK_LIMIT) {
                         System.out.println("Bị kẹt! Thử di chuyển ngẫu nhiên để thoát.");
                         hero.move(getRandomDirection());
@@ -84,9 +79,7 @@ public class Main {
                         return;
                     }
 
-
                     // --- BƯỚC 2: XÂY DỰNG CÂY QUYẾT ĐỊNH THÔNG MINH ---
-
 
                     // LUỒNG 1: ƯU TIÊN HÀNG ĐẦU - KIẾM SÚNG NẾU CHƯA CÓ HOẶC HẾT ĐẠN
                     if (player.getInventory().getGun() == null) {
@@ -102,7 +95,7 @@ public class Main {
                         } else {
                             // Không tìm thấy súng, tạm thời đi tấn công bằng vũ khí cận chiến
                             System.out.println("Không có súng trên bản đồ, chuyển sang cận chiến.");
-//                            handleMeleeAttack(hero, gameMap, restrictedNodes, player, nearestPlayer);
+                            // handleMeleeAttack(hero, gameMap, restrictedNodes, player, nearestPlayer);
                             String path = findPathToOtherPlayer(gameMap, restrictedNodes, player, nearestPlayer);
                             if (path.length() <= 1) {
                                 hero.attack(path);
@@ -115,12 +108,13 @@ public class Main {
 
                         if (pathToEnemy != null) {
                             if (canAttackByThrowable(pathToEnemy, player) != null) {
-                                hero.throwItem(canAttackByThrowable(pathToEnemy, player), player.getInventory().getThrowable().getRange());
+                                hero.throwItem(canAttackByThrowable(pathToEnemy, player),
+                                        player.getInventory().getThrowable().getRange());
                             }
-                            if(canAttackByMelee(pathToEnemy, player) != null) {
+                            if (canAttackByMelee(pathToEnemy, player) != null) {
                                 hero.attack(canAttackByMelee(pathToEnemy, player));
                             }
-                            if(canAttackBySpecial(pathToEnemy, player) != null) {
+                            if (canAttackBySpecial(pathToEnemy, player) != null) {
                                 hero.attack(canAttackBySpecial(pathToEnemy, player));
                             }
                             if (canAttackByGun(pathToEnemy, player) != null) {
@@ -137,25 +131,21 @@ public class Main {
                         }
                     }
 
-
                 } catch (Exception e) {
                     System.err.println("Lỗi nghiêm trọng trong hàm call: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
 
-
             // --- CÁC HÀM HỖ TRỢ CHO VIỆC CHỐNG KẸT ---
             private boolean isStuck(Player player) {
                 return player.x == lastPosition.x && player.y == lastPosition.y;
             }
 
-
             private void updateLastPosition(Player player) {
                 lastPosition.setPosition(player.x, player.y);
             }
         };
-
 
         hero.setOnMapUpdate(onMapUpdate);
         hero.start(SERVER_URL);
@@ -165,36 +155,32 @@ public class Main {
     // CÁC HÀM HỖ TRỢ (HELPER FUNCTIONS)
     // ============================================================================================
 
-
-    private static String getRandomDirection() {
-        String[] directions = {"u", "d", "l", "r"};
-        return directions[new Random().nextInt(directions.length)];
-    }
-
-    private static String findPathToOtherPlayer(GameMap gameMap, List<Node> nodes, Player player, Player nearestPlayer) {
-        if (nearestPlayer == null) return null;
+    private static String findPathToOtherPlayer(GameMap gameMap, List<Node> nodes, Player player,
+            Player nearestPlayer) {
+        if (nearestPlayer == null)
+            return null;
         List<Node> tempNodes = new ArrayList<>(nodes);
         tempNodes.remove(nearestPlayer);
         return PathUtils.getShortestPath(gameMap, tempNodes, player, nearestPlayer, false);
     }
 
-
     private static String findPathToGun(GameMap gameMap, List<Node> nodes, Player player) {
-        System.out.println("path to gun: "+gameMap.getAllGun().isEmpty());
-        if (gameMap.getAllGun().isEmpty()) return null;
+        System.out.println("path to gun: " + gameMap.getAllGun().isEmpty());
+        if (gameMap.getAllGun().isEmpty())
+            return null;
         Weapon nearestGun = getNearestGun(gameMap, player);
-        if(nearestGun == null) return null;
+        if (nearestGun == null)
+            return null;
         return PathUtils.getShortestPath(gameMap, nodes, player, nearestGun, false);
     }
-
 
     private static Player getNearestPlayer(GameMap gameMap, Player player) {
         List<Player> otherPlayers = gameMap.getOtherPlayerInfo();
         Player target = null;
-        double minDistance = Double.MAX_VALUE;
+        int minDistance = 99999;
         for (Player otherPlayer : otherPlayers) {
-            if (otherPlayer.getHealth() ==0) { // Chỉ tìm người chơi còn sống
-                double distance = Math.pow(player.x - otherPlayer.x, 2) + Math.pow(player.y - otherPlayer.y, 2);
+            if (otherPlayer.getHealth() > 0) {
+                int distance = PathUtils.distance(player, otherPlayer);
                 if (distance < minDistance) {
                     minDistance = distance;
                     target = otherPlayer;
@@ -204,52 +190,79 @@ public class Main {
         return target;
     }
 
+    private String findPathToGun(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
+        Weapon nearestGun = getNearestGun(gameMap, player);
+        if (nearestGun == null)
+            return null;
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestGun, false);
+    }
 
     private static Weapon getNearestGun(GameMap gameMap, Player player) {
         List<Weapon> guns = gameMap.getAllGun();
-        Weapon target = null;
+        Weapon nearestGun = null;
         double minDistance = Double.MAX_VALUE;
-        for (Weapon weapon : guns) {
-            double distance = Math.pow(player.x - weapon.x, 2) + Math.pow(player.y - weapon.y, 2);
+
+        for (Weapon gun : guns) {
+            double distance = PathUtils.distance(player, gun);
             if (distance < minDistance) {
                 minDistance = distance;
-                target = weapon;
+                nearestGun = gun;
             }
         }
-        return target;
+        return nearestGun;
     }
 
+    private static String findPathToOtherPlayer(List<Node> nodesToAvoid, Player player, Player nearestPlayer) {
+        return PathUtils.getShortestPath(hero.getGameMap(), nodesToAvoid, player, nearestPlayer, false);
+    }
 
-    public static String checkString(String path, int range) {
-        if (path == null || path.length() > range || path.isEmpty()) {
-            return null;
+    private static String getRandomDirection() {
+        String[] directions = { "u", "d", "l", "r" };
+        return directions[new Random().nextInt(directions.length)];
+    }
+
+    private static Node getNextPosition(Node currentPos, String direction) {
+        int newX = currentPos.x;
+        int newY = currentPos.y;
+
+        switch (direction) {
+            case "u":
+                newY--;
+                break;
+            case "d":
+                newY++;
+                break;
+            case "l":
+                newX--;
+                break;
+            case "r":
+                newX++;
+                break;
         }
-        char firstChar = path.charAt(0);
-        for (int i = 1; i < path.length(); i++) {
-            if (path.charAt(i) != firstChar) {
-                return null;
-            }
-        }
-        return String.valueOf(firstChar);
+        return new Node(newX, newY);
     }
 
     private static String canAttackByThrowable(String path, Player player) {
-        if (!isHaveThrowable(player)) return null;
+        if (!isHaveThrowable(player))
+            return null;
         return checkString(path, player.getInventory().getThrowable().getRange());
     }
 
     private static String canAttackBySpecial(String path, Player player) {
-        if (!isHaveSpecial(player)) return null;
+        if (!isHaveSpecial(player))
+            return null;
         return checkString(path, player.getInventory().getSpecial().getRange());
     }
 
     private static String canAttackByGun(String path, Player player) {
-        if (!isHaveGun(player)) return null;
+        if (!isHaveGun(player))
+            return null;
         return checkString(path, player.getInventory().getGun().getRange());
     }
 
     private static String canAttackByMelee(String path, Player player) {
-        if (!isHaveMelee(player)) return null;
+        if (!isHaveMelee(player))
+            return null;
         return checkString(path, player.getInventory().getMelee().getRange());
     }
 
@@ -264,7 +277,6 @@ public class Main {
     private static boolean isHaveGun(Player player) {
         return player.getInventory().getGun() != null;
     }
-
 
     private static boolean isHaveMelee(Player player) {
         return player.getInventory().getMelee() != null &&

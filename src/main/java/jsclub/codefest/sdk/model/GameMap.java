@@ -47,7 +47,6 @@ public class GameMap {
      */
     public void updateOnInitMap(Object arg) {
         try {
-            System.out.println("init arg: "+ arg);
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
             System.out.println("game map init:"+ message);
@@ -62,7 +61,7 @@ public class GameMap {
             }
             setListObstacleInit(newListObstacles);
 
-            System.out.println("mapData: "+this.listObstacles);
+            System.out.println("mapData: "+this.listObstacleInit);
         } catch (CloneNotSupportedException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -77,9 +76,7 @@ public class GameMap {
     public void updateOnUpdateMap(Object arg) {
         try {
             Gson gson = new Gson();
-            System.out.println("arg:"+arg);
             String message = MsgPackUtil.decode(arg);
-            System.out.println(message);
             MapData mapData = gson.fromJson(message, MapData.class);
             System.out.println(mapData);
             List<Obstacle> newListObstacles = new ArrayList<>();
