@@ -12,6 +12,8 @@ public enum ElementType {
     ARMOR,
     HELMET,
     OBSTACLE,
+    CHEST,
+    TRAP,
     ROAD,
     BULLET,
     BUILDING
