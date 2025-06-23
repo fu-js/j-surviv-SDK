@@ -18,7 +18,7 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server-staging.jsclub.dev";
-    private static final String GAME_ID = "175248";
+    private static final String GAME_ID = "132130";
     private static final String PLAYER_NAME = "lily";
     private static final String SECRET_KEY = "sk-qg_PU4LVSjayxzhWKLhYoA:ugsmwXKvksR3VqxK7_QeXMmew3zFq6Yghiicc_4uJX1StuTROImu9kguOQKj0TeHa4wD-5MCu5-PDUwLjLTYTg";
 
@@ -39,20 +39,27 @@ public class Main {
                     // --- BƯỚC 0: KIỂM TRA AN TOÀN VÀ CẬP NHẬT TRẠNG THÁI ---
                     if (args == null || args.length == 0) return;
 
-
                     GameMap gameMap = hero.getGameMap();
                     gameMap.updateOnUpdateMap(args[0]);
                     Player player = gameMap.getCurrentPlayer();
+
+                    List<Player> otherPlayers = gameMap.getOtherPlayerInfo();
                     Player nearestPlayer = getNearestPlayer(gameMap, player);
 
-//                    List<Obstacle> traps = gameMap.getObstaclesByTag("TRAP");
+                    // restricted list
+                    List<Obstacle> traps = gameMap.getObstaclesByTag("TRAP");
                     List<Obstacle> initThings = gameMap.getListObstacleInit();
                     List<Obstacle> canGoThroughs = gameMap.getObstaclesByTag("CAN_GO_THROUGH");
 
                     List<Node> restrictedNodes = new ArrayList<>(initThings);
                     restrictedNodes.removeAll(canGoThroughs);
-//                    restrictedNodes.addAll(traps);
+                    restrictedNodes.addAll(traps);
 
+                    //restricted with other players
+                    List<Node> restrictedNodeWithOtherPlayers = new ArrayList<>(restrictedNodes);
+                    restrictedNodeWithOtherPlayers.addAll(otherPlayers);
+
+                    /////////////----algorithm-----////////////
 
                     if (player == null || player.getHealth() ==0) {
                         System.out.println("Nhân vật đã chết hoặc chưa có dữ liệu.");
@@ -79,7 +86,6 @@ public class Main {
 
 
                     // --- BƯỚC 2: XÂY DỰNG CÂY QUYẾT ĐỊNH THÔNG MINH ---
-                    List<Node> nodesToAvoid = getNodeNeedToAvoid(gameMap);
 
 
                     // LUỒNG 1: ƯU TIÊN HÀNG ĐẦU - KIẾM SÚNG NẾU CHƯA CÓ HOẶC HẾT ĐẠN
@@ -96,17 +102,29 @@ public class Main {
                         } else {
                             // Không tìm thấy súng, tạm thời đi tấn công bằng vũ khí cận chiến
                             System.out.println("Không có súng trên bản đồ, chuyển sang cận chiến.");
-                            handleMeleeAttack(hero, gameMap, nodesToAvoid, player, nearestPlayer);
+//                            handleMeleeAttack(hero, gameMap, restrictedNodes, player, nearestPlayer);
+                            String path = findPathToOtherPlayer(gameMap, restrictedNodes, player, nearestPlayer);
+                            if (path.length() <= 1) {
+                                hero.attack(path);
+                            }
+
                         }
                         return;
                     } else {
                         String pathToEnemy = findPathToOtherPlayer(gameMap, restrictedNodes, player, nearestPlayer);
 
-
                         if (pathToEnemy != null) {
-                            // Kiểm tra điều kiện tấn công đặc biệt: path là 3 ký tự giống nhau
-                            if (PathUtils.distance(player, nearestPlayer) <= player.getInventory().getGun().getRange()) {
-                                hero.shoot(pathToEnemy.substring(0, 1));
+                            if (canAttackByThrowable(pathToEnemy, player) != null) {
+                                hero.throwItem(canAttackByThrowable(pathToEnemy, player), player.getInventory().getThrowable().getRange());
+                            }
+                            if(canAttackByMelee(pathToEnemy, player) != null) {
+                                hero.attack(canAttackByMelee(pathToEnemy, player));
+                            }
+                            if(canAttackBySpecial(pathToEnemy, player) != null) {
+                                hero.attack(canAttackBySpecial(pathToEnemy, player));
+                            }
+                            if (canAttackByGun(pathToEnemy, player) != null) {
+                                hero.shoot(canAttackByGun(pathToEnemy, player));
                             }
                             // Nếu không tấn công được, di chuyển lại gần
                             else {
@@ -143,24 +161,9 @@ public class Main {
         hero.start(SERVER_URL);
     }
 
-
     // ============================================================================================
     // CÁC HÀM HỖ TRỢ (HELPER FUNCTIONS)
     // ============================================================================================
-
-
-    private static void handleMeleeAttack(Hero hero, GameMap gameMap, List<Node> nodes, Player player, Player nearestPlayer) throws IOException {
-        String pathToEnemy = findPathToOtherPlayer(gameMap, nodes, player, nearestPlayer);
-        if (pathToEnemy != null) {
-            if (isHaveMelee(hero) && canAttackByMelee(pathToEnemy, hero)) {
-                hero.attack(checkString(pathToEnemy, hero.getInventory().getMelee().getRange()));
-            } else {
-                hero.move(pathToEnemy);
-            }
-        } else {
-            hero.move(getRandomDirection());
-        }
-    }
 
 
     private static String getRandomDirection() {
@@ -168,42 +171,7 @@ public class Main {
         return directions[new Random().nextInt(directions.length)];
     }
 
-
-    private static boolean isOutOfAmmo(Hero hero) {
-        return isHaveGun(hero);
-    }
-
-
-    private static boolean isSpecialAttackPath(String path) {
-        if (path == null || path.length() != 3) {
-            return false;
-        }
-        // Kiểm tra xem 3 ký tự có giống nhau không
-        return path.charAt(0) == path.charAt(1) && path.charAt(1) == path.charAt(2);
-    }
-
-
-    // ... (Các hàm helper cũ giữ nguyên và được cải tiến) ...
-
-
-    private static List<Node> getNodeNeedToAvoid(GameMap gameMap) {
-        List<Node> nodes = new ArrayList<>();
-        for (Obstacle obstacle : gameMap.getListObstacleInit()) {
-            nodes.add(obstacle);
-        }
-        for (Player player : gameMap.getOtherPlayerInfo()) {
-            nodes.add(player);
-        }
-        // Thêm các vật cản có thể phá hủy vào danh sách cần tránh
-        for(Obstacle obstacle : gameMap.getListObstacles()){
-            nodes.add(obstacle);
-        }
-        return nodes;
-    }
-
-
     private static String findPathToOtherPlayer(GameMap gameMap, List<Node> nodes, Player player, Player nearestPlayer) {
-//        Player nearestPlayer = getNearestPlayer(gameMap, player);
         if (nearestPlayer == null) return null;
         List<Node> tempNodes = new ArrayList<>(nodes);
         tempNodes.remove(nearestPlayer);
@@ -265,26 +233,41 @@ public class Main {
         return String.valueOf(firstChar);
     }
 
+    private static String canAttackByThrowable(String path, Player player) {
+        if (!isHaveThrowable(player)) return null;
+        return checkString(path, player.getInventory().getThrowable().getRange());
+    }
 
-    private static boolean canAttackByGun(String path, Hero hero) {
-        if (!isHaveGun(hero)) return false;
-        return checkString(path, hero.getInventory().getGun().getRange()) != null;
+    private static String canAttackBySpecial(String path, Player player) {
+        if (!isHaveSpecial(player)) return null;
+        return checkString(path, player.getInventory().getSpecial().getRange());
+    }
+
+    private static String canAttackByGun(String path, Player player) {
+        if (!isHaveGun(player)) return null;
+        return checkString(path, player.getInventory().getGun().getRange());
+    }
+
+    private static String canAttackByMelee(String path, Player player) {
+        if (!isHaveMelee(player)) return null;
+        return checkString(path, player.getInventory().getMelee().getRange());
+    }
+
+    private static boolean isHaveSpecial(Player player) {
+        return player.getInventory().getSpecial() != null;
+    }
+
+    private static boolean isHaveThrowable(Player player) {
+        return player.getInventory().getThrowable() != null;
+    }
+
+    private static boolean isHaveGun(Player player) {
+        return player.getInventory().getGun() != null;
     }
 
 
-    private static boolean canAttackByMelee(String path, Hero hero) {
-        if (!isHaveMelee(hero)) return false;
-        return checkString(path, hero.getInventory().getMelee().getRange()) != null;
-    }
-
-
-    private static boolean isHaveGun(Hero hero) {
-        return hero.getInventory().getGun() != null;
-    }
-
-
-    private static boolean isHaveMelee(Hero hero) {
-        return hero.getInventory().getMelee() != null &&
-                !hero.getInventory().getMelee().getId().equalsIgnoreCase("HAND");
+    private static boolean isHaveMelee(Player player) {
+        return player.getInventory().getMelee() != null &&
+                !player.getInventory().getMelee().getId().equalsIgnoreCase("HAND");
     }
 }
