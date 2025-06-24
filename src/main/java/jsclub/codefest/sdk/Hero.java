@@ -287,6 +287,7 @@ public class Hero {
         listItem.addAll(getGameMap().getAllGun());
         listItem.addAll(getGameMap().getAllMelee());
         listItem.addAll(getGameMap().getAllThrowable());
+        listItem.addAll(getGameMap().getAllSpecial());
         listItem.addAll(getGameMap().getListArmors());
 
         boolean hasItem = false;
