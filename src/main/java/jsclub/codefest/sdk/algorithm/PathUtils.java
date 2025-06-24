@@ -49,7 +49,7 @@ public class PathUtils {
         int mapSize = gameMap.getMapSize();
         int safeZone = gameMap.getSafeZone();
 
-        List<Obstacle> initThings = gameMap.getListObstacleInit();
+        List<Obstacle> initThings = gameMap.getListObstaclesInit();
         List<Obstacle> canGoThroughs = gameMap.getObstaclesByTag("CAN_GO_THROUGH");
 
         List<Node> listIndestructibleNodes = new ArrayList<>(initThings);
