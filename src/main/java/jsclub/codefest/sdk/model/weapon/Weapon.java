@@ -1,13 +1,9 @@
 package jsclub.codefest.sdk.model.weapon;
 
-import com.google.gson.Gson;
 import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
 import jsclub.codefest.sdk.model.effects.Effect;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Weapon extends Element {
@@ -87,45 +83,5 @@ public class Weapon extends Element {
 
     public Bullet getBullet() {
         return bullet;
-    }
-
-    public void setRarity(int rarity) {
-        this.rarity = rarity;
-    }
-
-    public void setPickupPoints(int pickupPoints) {
-        this.pickupPoints = pickupPoints;
-    }
-
-    public void setHitPoints(int hitPoints) {
-        this.hitPoints = hitPoints;
-    }
-
-    public void setCooldown(double cooldown) {
-        this.cooldown = cooldown;
-    }
-
-    public void setUseCounts(int useCounts) {
-        this.useCounts = useCounts;
-    }
-
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
-    public void setRange(int range) {
-        this.range = range;
-    }
-
-    public void setExplosionRange(int explosionRange) {
-        this.explosionRange = explosionRange;
-    }
-
-    public void setAttackRange(AttackRange attackRange) {
-        this.attackRange = attackRange;
-    }
-
-    public void setBullet(Bullet bullet) {
-        this.bullet = bullet;
     }
 }
