@@ -4,6 +4,7 @@ import io.socket.emitter.Emitter;
 import jsclub.codefest.sdk.algorithm.PathUtils;
 import jsclub.codefest.sdk.base.Node;
 import jsclub.codefest.sdk.model.GameMap;
+import jsclub.codefest.sdk.model.Inventory;
 import jsclub.codefest.sdk.model.players.Player;
 import jsclub.codefest.sdk.model.weapon.Weapon;
 
@@ -14,7 +15,7 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server-staging.jsclub.dev";
-    private static final String GAME_ID = "120154";
+    private static final String GAME_ID = "1";
     private static final String PLAYER_NAME = "lily";
     private static final String SECRET_KEY = "sk-7YLsiWMySB-d_CgInug_mw:kdeAyOViSRxixQCj4VgYfiT1TJpg5AVbUgrcNonekN0ib9zSHrDTO-L3nKc9GKA40rlFjBT10C_dftiVuMaj1Q";
 
@@ -47,6 +48,7 @@ class MapUpdateListener implements Emitter.Listener {
             GameMap gameMap = hero.getGameMap();
             gameMap.updateOnUpdateMap(args[0]);
             Player player = gameMap.getCurrentPlayer();
+            Inventory heroInvent = gameMap.getHeroInventory();
 
             if (player == null || player.getHealth() == 0) {
                 System.out.println("Player is dead or data is not available.");
@@ -54,7 +56,7 @@ class MapUpdateListener implements Emitter.Listener {
             }
 
             System.out.println("CurrentPlayer: " + player.getPosition());
-            System.out.println("CurrentInventory: " + player.getInventory());
+            System.out.println("CurrentInventory: " + gameMap.getHeroInventory());
 
             handleStuckDetection(player);
             if (stuckCounter > Main.STUCK_LIMIT) {
@@ -65,10 +67,10 @@ class MapUpdateListener implements Emitter.Listener {
             List<Node> nodesToAvoid = getNodesToAvoid(gameMap);
             Player nearestPlayer = getNearestPlayer(gameMap, player);
 
-            if (player.getInventory().getGun() == null) {
+            if (gameMap.getHeroInventory().getGun() == null) {
                 handleSearchForGun(gameMap, player, nodesToAvoid);
             } else {
-                handleCombat(nearestPlayer, nodesToAvoid, player);
+                handleCombat(gameMap, nearestPlayer, nodesToAvoid, player);
             }
 
             System.out.println("game map: "+ gameMap);
@@ -96,8 +98,8 @@ class MapUpdateListener implements Emitter.Listener {
         stuckCounter = 0;
     }
 
-    private boolean shouldDodge(Player nearestPlayer, Player player) {
-        return player.getInventory().getGun() == null &&
+    private boolean shouldDodge(GameMap gameMap, Player nearestPlayer, Player player) {
+        return gameMap.getHeroInventory().getGun() == null &&
                 nearestPlayer != null &&
                 PathUtils.distance(player, nearestPlayer) <= Main.DODGE_RANGE;
     }
@@ -129,14 +131,14 @@ class MapUpdateListener implements Emitter.Listener {
         }
     }
 
-    private void handleCombat(Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
+    private void handleCombat(GameMap gameMap, Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
         if (nearestPlayer == null) {
             hero.move(getRandomDirection());
             return;
         }
 
         String pathToEnemy = findPathToOtherPlayer(nodesToAvoid, player, nearestPlayer);
-        if (pathToEnemy != null && PathUtils.distance(player, nearestPlayer) <= player.getInventory().getGun().getRange()) {
+        if (pathToEnemy != null && PathUtils.distance(player, nearestPlayer) <= gameMap.getHeroInventory().getGun().getRange()) {
             System.out.println("Enemy in range. Shooting!");
             hero.shoot(pathToEnemy.substring(0, 1));
         } else if (pathToEnemy != null) {

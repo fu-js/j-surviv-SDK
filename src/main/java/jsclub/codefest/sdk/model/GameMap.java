@@ -41,6 +41,21 @@ public class GameMap {
     private Inventory heroInventory;
     private List<Effect> heroEffect;
 
+    public Inventory getHeroInventory() {
+        return heroInventory;
+    }
+
+    public void setHeroInventory(Inventory heroInventory) {
+        this.heroInventory = heroInventory;
+    }
+
+    public List<Effect> getHeroEffect() {
+        return heroEffect;
+    }
+
+    public void setHeroEffect(List<Effect> heroEffect) {
+        this.heroEffect = heroEffect;
+    }
 
     public GameMap(Inventory heroInventory, List<Effect> heroEffect) {
         this.heroInventory = heroInventory;
