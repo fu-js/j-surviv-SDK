@@ -11,7 +11,7 @@ public class Armor extends Element {
     private final int damageReduce;
     private final double healthPoint;
 
-    public Armor(String id, ElementType type, int rarity, double healthPoint, int damageReduce) {
+    public Armor(String id, ElementType type, double healthPoint, int damageReduce) {
         super(id);
         this.damageReduce = damageReduce;
         this.healthPoint = healthPoint;
