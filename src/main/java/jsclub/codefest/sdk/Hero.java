@@ -134,7 +134,7 @@ public class Hero {
      * @param direction the direction in which to shoot
      * @throws IOException if an I/O error occurs
      */
-    public void useSpecial(String direction, Weapon special) throws IOException{
+    public void useSpecial(String direction) throws IOException{
         Socket socket = socketClient.getSocket();
 
         if (direction.isEmpty()) {
@@ -152,7 +152,7 @@ public class Hero {
             return;
         }
 
-        if (socket == null || getInventory().getSpecial() == null) {
+        if (socket == null) {
             System.out.println("DEBUG FROM SDK useSpecial ERROR : Socket is null or inventory does not have special weapons");
             return;
         }
@@ -289,6 +289,7 @@ public class Hero {
         listItem.addAll(getGameMap().getAllGun());
         listItem.addAll(getGameMap().getAllMelee());
         listItem.addAll(getGameMap().getAllThrowable());
+        listItem.addAll(getGameMap().getAllSpecial());
         listItem.addAll(getGameMap().getListArmors());
         listItem.addAll(getGameMap().getAllSpecial());
 

@@ -26,10 +26,11 @@ public class GameMap {
     private static final Logger log = LogManager.getLogger(GameMap.class);
     private int mapSize = 0;
     private int safeZone = 0;
-    private List<Obstacle> listObstacleInit = new ArrayList<>();
     private List<Obstacle> listObstacles = new ArrayList<>();
+    private List<Obstacle> listIndestructibles = new ArrayList<>();
     private List<Obstacle> listChests = new ArrayList<>();
-    private List<Obstacle> listTraps = new ArrayList<>();
+    private List<Obstacle> listTrapsInit = new ArrayList<>();
+    private List<Obstacle> listTraps = new ArrayList<>(); // chưa xong -> Chưa merge được 2 Traps
     private List<Enemy> listEnemies = new ArrayList<>();
     private List<Ally> listAllies = new ArrayList<>();
     private List<Weapon> listWeapons = new ArrayList<>();
@@ -41,7 +42,7 @@ public class GameMap {
     private Inventory heroInventory;
     private List<Effect> heroEffect;
 
-    public Inventory getHeroInventory() {
+    private Inventory getHeroInventory() {
         return heroInventory;
     }
 
@@ -72,19 +73,24 @@ public class GameMap {
         try {
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
-            System.out.println("game map init:"+ message);
             MapData mapData = gson.fromJson(message, MapData.class);
             setMapSize(mapData.mapSize);
 
-            List<Obstacle> newListObstacles = new ArrayList<>();
-            
+            List<Obstacle> newListIndestructibles = new ArrayList<>();
+            List<Obstacle> newListTrapsInit = new ArrayList<>();
+
             for (Obstacle o : mapData.listObstacles){
                 Obstacle obstacle = ObstacleFactory.getObstacle(o.getId(), o.x, o.y);
-                newListObstacles.add(obstacle);
+                if (obstacle.getType() == ElementType.TRAP)
+                    newListTrapsInit.add(obstacle);
+                else
+                    newListIndestructibles.add(obstacle);
             }
-            setListObstacleInit(newListObstacles);
+            setListIndestructibles(newListIndestructibles);
+            setListTrapsInit(newListTrapsInit);
 
-            System.out.println("mapData: "+this.listObstacleInit);
+
+//            System.out.println("mapData: "+this.listObstaclesInit);
         } catch (CloneNotSupportedException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +106,7 @@ public class GameMap {
         try {
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
-            System.out.println("message:" + message);
+            System.out.println("MESSAGE UPDATE: " + message);
             MapData mapData = gson.fromJson(message, MapData.class);
             System.out.println(mapData);
             List<Obstacle> newListObstacles = new ArrayList<>();
@@ -117,10 +123,6 @@ public class GameMap {
             setSafeZone(mapData.safeZone);
 
             for (Entity entity : mapData.listEntities) {
-                if (entity.type == ElementType.OBSTACLE) {
-                    Obstacle obstacle = ObstacleFactory.getObstacle(entity.id, entity.x, entity.y);
-                    newListObstacles.add(obstacle);
-                }
 
                 if (entity.type == ElementType.CHEST) {
                     Obstacle obstacle = ObstacleFactory.getObstacle(entity.id, entity.x, entity.y);
@@ -136,12 +138,12 @@ public class GameMap {
                     Enemy enemy = EnemyFactory.getEnemy(entity.id, entity.x, entity.y);
                     newListEnemies.add(enemy);
                 }
-                
+
                 if (entity.type == ElementType.ALLY) {
                     Ally ally = AllyFactory.getAlly(entity.id, entity.x, entity.y);
                     newListAllies.add(ally);
                 }
-                
+
                 if (entity.type == ElementType.MELEE
                  || entity.type == ElementType.THROWABLE
                  || entity.type == ElementType.GUN
@@ -149,12 +151,12 @@ public class GameMap {
                     Weapon weapon = WeaponFactory.getWeapon(entity.id, entity.x, entity.y);
                     newListWeapons.add(weapon);
                 }
-                
+
                 if (entity.type == ElementType.HEALING_ITEM) {
                     HealingItem healing = HealingItemFactory.getHealingItem(entity.id, entity.x, entity.y);
                     newListHealingItem.add(healing);
                 }
-                
+
                 if (entity.type == ElementType.ARMOR
                  || entity.type == ElementType.HELMET) {
                     Armor armor = ArmorFactory.getArmor(entity.id, entity.x, entity.y);
@@ -167,9 +169,9 @@ public class GameMap {
                 // }
             }
 
+            newListTrap.addAll(listTrapsInit);
             setListChests(newListChest);
             setListTraps(newListTrap);
-            setListObstacles(newListObstacles);
             setListEnemies(newListEnemies);
             setListAllies(newListAllies);
             setListWeapons(newListWeapons);
@@ -205,6 +207,14 @@ public class GameMap {
         this.listTraps = listTraps;
     }
 
+    private List<Obstacle> getListTrapsInit() {
+        return listTrapsInit;
+    }
+
+    public void setListTrapsInit(List<Obstacle> listTrapsInit) {
+        this.listTrapsInit = listTrapsInit;
+    }
+
     /**
      * find element by position
      *
@@ -225,7 +235,7 @@ public class GameMap {
 
         element = this.findElementInListByIndex(x, y, this.listAllies);
         if (element != null) return element;
-        
+
         element = this.findElementInListByIndex(x, y, this.listWeapons);
         if (element != null) return element;
 
@@ -332,6 +342,13 @@ public class GameMap {
     }
 
     public List<Obstacle> getListObstacles() {
+        List<Obstacle> listObstacles = new ArrayList<>(listIndestructibles);
+        try {
+            listObstacles.addAll(listChests);
+            listObstacles.addAll(listTraps);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new RuntimeException(e);
+        }
         return listObstacles;
     }
 
@@ -375,12 +392,12 @@ public class GameMap {
         this.safeZone = safeZone;
     }
 
-    public void setListObstacleInit(List<Obstacle> listObstacleInit) {
-        this.listObstacleInit = listObstacleInit;
+    public void setListIndestructibles(List<Obstacle> listIndestructibles) {
+        this.listIndestructibles = listIndestructibles;
     }
 
-    public List<Obstacle> getListObstacleInit() {
-        return listObstacleInit;
+    public List<Obstacle> getListIndestructibles() {
+        return listIndestructibles;
     }
 
     // public void setListIndestructibleObstacles(List<Obstacle> listIndestructibleObstacles) {

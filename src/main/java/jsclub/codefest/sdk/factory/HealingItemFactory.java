@@ -10,7 +10,7 @@ public class HealingItemFactory {
     /**
      * Available HealingItems
      */
-    public static final Map<String, HealingItem> healingItemMap = Map.of(
+    private static final Map<String, HealingItem> healingItemMap = Map.of(
         "GOD_LEAF", new HealingItem("GOD_LEAF", ElementType.HEALING_ITEM, 25, 0.5, 10, 0, 5, null),
         "SPIRIT_TEAR", new HealingItem("SPIRIT_TEAR", ElementType.HEALING_ITEM, 20, 0.5, 15, 0, 15, null),
         "MERMAID_TAIL", new HealingItem("MERMAID_TAIL", ElementType.HEALING_ITEM, 15, 1, 20, 0, 20, null),

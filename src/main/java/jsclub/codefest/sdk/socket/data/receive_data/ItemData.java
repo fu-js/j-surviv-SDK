@@ -30,9 +30,6 @@ public class ItemData {
         public Long durability;
     }
 
-//    @SerializedName("attributes")
-//    public Object attributes;
-
     @Override
     public String toString() {
         return new Gson().toJson(this);

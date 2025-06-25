@@ -23,10 +23,9 @@ public class onplayerInventoryClear implements Emitter.Listener {
     public void call(Object... args) {
         try {
             String message = MsgPackUtil.decode(args[0]);
-            System.out.println("clear: "+message);
-            ItemData itemData = gson.fromJson(message, ItemData.class);
-            ElementType type = itemData.getType();
-            String id = itemData.getId();
+            ItemData.Item itemData = gson.fromJson(message, ItemData.Item.class);
+            ElementType type = itemData.type;
+            String id = itemData.ID;
             System.out.println("Item cleared: " + id);
             switch (type) {
                 case GUN:
