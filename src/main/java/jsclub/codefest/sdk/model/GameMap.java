@@ -72,7 +72,6 @@ public class GameMap {
         try {
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
-            System.out.println("game map init:"+ message);
             MapData mapData = gson.fromJson(message, MapData.class);
             setMapSize(mapData.mapSize);
 
@@ -84,7 +83,7 @@ public class GameMap {
             }
             setListObstaclesInit(newListObstacles);
 
-            System.out.println("mapData: "+this.listObstaclesInit);
+//            System.out.println("mapData: "+this.listObstaclesInit);
         } catch (CloneNotSupportedException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +99,6 @@ public class GameMap {
         try {
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
-            System.out.println("message:" + message);
             MapData mapData = gson.fromJson(message, MapData.class);
             System.out.println(mapData);
             List<Obstacle> newListObstacles = new ArrayList<>();
@@ -267,6 +265,11 @@ public class GameMap {
         try {
             ObstacleTag t = ObstacleTag.valueOf(tag);
             for (Obstacle o : listObstaclesUpdate) {
+                if (o.getTag().contains(t)) {
+                    obstacles.add(o);
+                }
+            }
+            for (Obstacle o : listObstaclesInit) {
                 if (o.getTag().contains(t)) {
                     obstacles.add(o);
                 }

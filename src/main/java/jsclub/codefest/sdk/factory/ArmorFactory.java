@@ -12,7 +12,7 @@ public class ArmorFactory {
     /**
      * Available Armors
      */
-    public static final Map<String, Armor> armorMap = Map.of(
+    private static final Map<String, Armor> armorMap = Map.of(
         "WOODEN_HELMET", new Armor("WOODEN_HELMET", ElementType.HELMET, 40, 20, 5),
         "ARMOR", new Armor("ARMOR", ElementType.ARMOR, 30, 50, 20),
         "MAGIC_HELMET", new Armor("MAGIC_HELMET", ElementType.HELMET, 20, 50, 20),

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class EffectFactory {
-public static final Map<String, Effect> elementMap = Map.ofEntries(
+    private static final Map<String, Effect> elementMap = Map.ofEntries(
         Map.entry("STUN", new Effect((long)-1, "STUN", 0)),
         Map.entry("INVISIBLE", new Effect((long)-1, "INVISIBLE", 0)),
         Map.entry("POISON", new Effect((long)-1, "POISON", 5)),

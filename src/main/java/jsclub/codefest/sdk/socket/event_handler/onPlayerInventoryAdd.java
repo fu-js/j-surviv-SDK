@@ -25,8 +25,8 @@ public class onPlayerInventoryAdd implements Emitter.Listener {
         try {
             String message = MsgPackUtil.decode(args[0]);
             ItemData itemData = gson.fromJson(message, ItemData.class);
-            ElementType type = itemData.type;
-            String id = itemData.ID;
+            ElementType type = itemData.getType();
+            String id = itemData.getId();
             System.out.println("Item added: " + id);
             switch (type) {
                 case GUN:
