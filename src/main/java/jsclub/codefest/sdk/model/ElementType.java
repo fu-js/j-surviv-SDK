@@ -11,7 +11,7 @@ public enum ElementType {
     HEALING_ITEM,
     ARMOR,
     HELMET,
-    OBSTACLE,
+    INDESTRUCTIBLE,
     CHEST,
     TRAP,
     ROAD,
