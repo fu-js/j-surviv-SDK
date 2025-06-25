@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Random;
 
 public class Main {
-    private static final String SERVER_URL = "https://cf25-server-staging.jsclub.dev";
-    private static final String GAME_ID = "102486";
+    private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
+    private static final String GAME_ID = "178457";
     private static final String PLAYER_NAME = "lily";
-    private static final String SECRET_KEY = "sk--548ZnIYTk6CR2B-GPJgng:EQVVcoJMz-Buk0lgIej9IbH7ORwV4gTgfIJAGZyIuTGBD8aJwrLyDvVqv8b5hcy4_GWcPOtra5qPWNtxp3okgg";
+    private static final String SECRET_KEY = "sk-QzpmiqwsQcGzZE9lPPEKqw:vJpcUbwUzYpSSj7QqrqPx4TrjPlYATfg-AnkYisTZN77J5hXRh3xs925DL6KdzgnKEjeWNcS6QAP6KsW-pHnxQ";
 
     public static final int STUCK_LIMIT = 4;
     public static final int DODGE_RANGE = 3;
@@ -73,6 +73,7 @@ class MapUpdateListener implements Emitter.Listener {
                 handleSearchForGun(gameMap, player, nodesToAvoid);
             } else {
 //                handleCombatByGun(gameMap, nearestPlayer, nodesToAvoid, player);
+                hero.revokeItem(heroInvent.getGun().getId());
             }
 
             //Melee
