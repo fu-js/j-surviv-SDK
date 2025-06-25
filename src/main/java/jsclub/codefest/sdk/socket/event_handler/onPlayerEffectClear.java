@@ -25,7 +25,8 @@ public class onPlayerEffectClear implements Emitter.Listener {
             //{"effectId":"STUN"}
             EffectClearData effect = gson.fromJson(message, EffectClearData.class);
             System.out.println("Effect cleared: " + effect.effectId);
-            effects.remove(EffectFactory.getEffects(effect.effectId));
+            effects.removeIf(e -> e.id.equals(effect.effectId));
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
