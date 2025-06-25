@@ -5,17 +5,30 @@ import com.google.gson.annotations.SerializedName;
 import jsclub.codefest.sdk.model.ElementType;
 
 public class ItemData {
-    @SerializedName("id")
-    public String ID;
+    @SerializedName("item")
+    public Item item;
 
-    @SerializedName("type")
-    public ElementType type;
+    public String getId() {
+        return item.ID;
+    }
 
-    @SerializedName("level")
-    public int level;
+    public ElementType getType() {
+        return item.type;
+    }
 
-    @SerializedName("durability")
-    public Long durability;
+    class Item {
+        @SerializedName("id")
+        public String ID;
+
+        @SerializedName("type")
+        public ElementType type;
+
+        @SerializedName("level")
+        public int level;
+
+        @SerializedName("durability")
+        public Long durability;
+    }
 
 //    @SerializedName("attributes")
 //    public Object attributes;

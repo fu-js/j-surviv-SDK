@@ -157,7 +157,7 @@ public class Hero {
             return;
         }
 
-        PlayerUseSpecialAction botUseSpecial = new PlayerUseSpecialAction(direction,special);
+        PlayerUseSpecialAction botUseSpecial = new PlayerUseSpecialAction(direction);
         byte[] bytes = MsgPackUtil.encodeFromObject(botUseSpecial);
         socket.emit(EventName.EMIT_USE_SPECIAL, (Object)bytes);
 
@@ -271,6 +271,8 @@ public class Hero {
         Node currentPos = new Node(getGameMap().getCurrentPlayer().x, getGameMap().getCurrentPlayer().y);
         boolean hasItem = hasItem(currentPos.x, currentPos.y);
 
+        System.out.println("hasItem:"+hasItem);
+
         if (socket == null || !hasItem) {
             System.out.println("DEBUG FROM SDK pickupItem ERROR : Socket is null or current position does not have item");
             return;
@@ -288,6 +290,7 @@ public class Hero {
         listItem.addAll(getGameMap().getAllMelee());
         listItem.addAll(getGameMap().getAllThrowable());
         listItem.addAll(getGameMap().getListArmors());
+        listItem.addAll(getGameMap().getAllSpecial());
 
         boolean hasItem = false;
 

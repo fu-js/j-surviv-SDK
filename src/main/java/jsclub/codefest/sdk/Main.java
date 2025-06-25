@@ -5,6 +5,7 @@ import jsclub.codefest.sdk.algorithm.PathUtils;
 import jsclub.codefest.sdk.base.Node;
 import jsclub.codefest.sdk.model.GameMap;
 import jsclub.codefest.sdk.model.Inventory;
+import jsclub.codefest.sdk.model.obstacles.Obstacle;
 import jsclub.codefest.sdk.model.players.Player;
 import jsclub.codefest.sdk.model.weapon.Weapon;
 
@@ -15,9 +16,9 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server-staging.jsclub.dev";
-    private static final String GAME_ID = "1";
+    private static final String GAME_ID = "102486";
     private static final String PLAYER_NAME = "lily";
-    private static final String SECRET_KEY = "sk-7YLsiWMySB-d_CgInug_mw:kdeAyOViSRxixQCj4VgYfiT1TJpg5AVbUgrcNonekN0ib9zSHrDTO-L3nKc9GKA40rlFjBT10C_dftiVuMaj1Q";
+    private static final String SECRET_KEY = "sk--548ZnIYTk6CR2B-GPJgng:EQVVcoJMz-Buk0lgIej9IbH7ORwV4gTgfIJAGZyIuTGBD8aJwrLyDvVqv8b5hcy4_GWcPOtra5qPWNtxp3okgg";
 
     public static final int STUCK_LIMIT = 4;
     public static final int DODGE_RANGE = 3;
@@ -67,11 +68,23 @@ class MapUpdateListener implements Emitter.Listener {
             List<Node> nodesToAvoid = getNodesToAvoid(gameMap);
             Player nearestPlayer = getNearestPlayer(gameMap, player);
 
+//            Gun
             if (gameMap.getHeroInventory().getGun() == null) {
                 handleSearchForGun(gameMap, player, nodesToAvoid);
             } else {
-                handleCombat(gameMap, nearestPlayer, nodesToAvoid, player);
+//                handleCombatByGun(gameMap, nearestPlayer, nodesToAvoid, player);
             }
+
+            //Melee
+//            if(heroInvent.getSpecial() == null) {
+//                if(findPathToSpecial(gameMap, nodesToAvoid, player) != null) {
+//                    handleSearchForSpecial(gameMap, player, nodesToAvoid);
+//                } else {
+//                    handleFindNearestChest(gameMap, player, nodesToAvoid);
+//                }
+//            } else {
+//                handleCombatBySpecial(gameMap, nearestPlayer, nodesToAvoid, player);
+//            }
 
             System.out.println("game map: "+ gameMap);
 
@@ -131,16 +144,75 @@ class MapUpdateListener implements Emitter.Listener {
         }
     }
 
-    private void handleCombat(GameMap gameMap, Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
+    private void handleSearchForSpecial(GameMap gameMap, Player player, List<Node> nodesToAvoid) throws IOException {
+        System.out.println("No special found. Searching for a special.");
+        String pathToSpecial = findPathToSpecial(gameMap, nodesToAvoid, player);
+
+        if (pathToSpecial != null) {
+            if (pathToSpecial.isEmpty()) {
+                hero.pickupItem();
+            } else {
+                hero.move(pathToSpecial);
+            }
+        } else {
+            hero.move(getRandomDirection());
+        }
+    }
+
+    private void handleSearchForMelee(GameMap gameMap, Player player, List<Node> nodesToAvoid) throws IOException {
+        System.out.println("No melee found. Searching for a melee.");
+        String pathToMelee = findPathToMelee(gameMap, nodesToAvoid, player);
+
+        if (pathToMelee != null) {
+            if (pathToMelee.isEmpty()) {
+                hero.pickupItem();
+            } else {
+                hero.move(pathToMelee);
+            }
+        } else {
+            hero.move(getRandomDirection());
+        }
+    }
+
+    private void handleSearchForThrowable(GameMap gameMap, Player player, List<Node> nodesToAvoid) throws IOException {
+        System.out.println("No throwable found. Searching for a throwable.");
+        String pathToThrowable = findPathToThrowable(gameMap, nodesToAvoid, player);
+
+        if (pathToThrowable != null) {
+            if (pathToThrowable.isEmpty()) {
+                hero.pickupItem();
+            } else {
+                hero.move(pathToThrowable);
+            }
+        } else {
+            hero.move(getRandomDirection());
+        }
+    }
+
+    private String checkString (String path, int range) {
+        if (path == null || path.length() > range) {
+            return null;
+        }
+        String firstLetter = path.substring(0,1);
+        for (int i = 0; i < path.length(); i++) {
+            if(firstLetter.compareToIgnoreCase(path.charAt(i) + "") != 0) {
+                return null;
+            }
+        }
+        return firstLetter;
+    }
+
+    private void handleCombatByGun(GameMap gameMap, Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
         if (nearestPlayer == null) {
             hero.move(getRandomDirection());
             return;
         }
 
         String pathToEnemy = findPathToOtherPlayer(nodesToAvoid, player, nearestPlayer);
-        if (pathToEnemy != null && PathUtils.distance(player, nearestPlayer) <= gameMap.getHeroInventory().getGun().getRange()) {
+        String checkString = checkString(pathToEnemy, gameMap.getHeroInventory().getGun().getRange());
+        if (checkString != null) {
             System.out.println("Enemy in range. Shooting!");
-            hero.shoot(pathToEnemy.substring(0, 1));
+            hero.shoot(checkString);
         } else if (pathToEnemy != null) {
             System.out.println("Moving closer to enemy: " + pathToEnemy);
             hero.move(pathToEnemy);
@@ -148,6 +220,105 @@ class MapUpdateListener implements Emitter.Listener {
             hero.move(getRandomDirection());
         }
     }
+
+    private void handleCombatByMelee(GameMap gameMap, Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
+        if (nearestPlayer == null) {
+            hero.attack(getRandomDirection());
+            return;
+        }
+
+        String pathToEnemy = findPathToOtherPlayer(nodesToAvoid, player, nearestPlayer);
+        String checkString = checkString(pathToEnemy, 1);
+        if (checkString != null) {
+            System.out.println("Enemy in range. Attacking!");
+            hero.attack(checkString);
+        } else if (pathToEnemy != null) {
+            System.out.println("Moving closer to enemy: " + pathToEnemy);
+            hero.move(pathToEnemy);
+        } else {
+            hero.attack(getRandomDirection());
+        }
+    }
+    private void handleCombatByThrowable(GameMap gameMap, Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
+        if (gameMap.getHeroInventory().getThrowable()!=null){
+            if (nearestPlayer == null) {
+                hero.throwItem(getRandomDirection(), 3);
+                return;
+            }
+
+            String pathToEnemy = findPathToOtherPlayer(nodesToAvoid, player, nearestPlayer);
+            String checkString = checkString(pathToEnemy, pathToEnemy.length());
+            if (checkString != null) {
+                System.out.println("Enemy in range. Throw!");
+                hero.throwItem(checkString, pathToEnemy.length());
+            } else if (pathToEnemy != null) {
+                System.out.println("Moving closer to enemy: " + pathToEnemy);
+                hero.move(pathToEnemy);
+            } else {
+                hero.throwItem(getRandomDirection(), 3);
+            }
+        } else {
+            return;
+        }
+    }
+    private void handleCombatBySpecial(GameMap gameMap, Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
+        Weapon special = gameMap.getHeroInventory().getSpecial();
+        if (gameMap.getHeroInventory().getSpecial()!=null){
+            if (nearestPlayer == null) {
+                hero.useSpecial(getRandomDirection(), special);
+                return;
+            }
+
+            String pathToEnemy = findPathToOtherPlayer(nodesToAvoid, player, nearestPlayer);
+            String checkString = checkString(pathToEnemy, special.getRange());
+            if (checkString != null) {
+                System.out.println("Enemy in range. Special!");
+                hero.useSpecial(checkString, special);
+            } else if (pathToEnemy != null) {
+                System.out.println("Moving closer to enemy: " + special.getRange());
+                hero.move(pathToEnemy);
+            } else {
+                hero.useSpecial(getRandomDirection(), special);
+            }
+        } else {
+            return;
+        }
+    }
+
+
+    private String findPathToChest(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
+        Obstacle nearestChest = getNearestChest(gameMap, player);
+        if (nearestChest == null) return null;
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestChest, false);
+    }
+    private String findPathToMelee(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
+        Weapon nearestMelee = getNearestMelee(gameMap, player);
+        if (nearestMelee == null) return null;
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestMelee, false);
+    }
+
+    private String findPathToThrowable(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
+        Weapon nearestThrow = getNearestThrow(gameMap, player);
+        if (nearestThrow == null) return null;
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestThrow, false);
+    }
+
+
+    private void handleFindNearestChest(GameMap gameMap, Player player, List<Node> nodesToAvoid) throws IOException {
+        System.out.println("No chest found. Searching for a chest.");
+        String pathToChest = findPathToChest(gameMap, nodesToAvoid, player);
+
+        if (pathToChest != null) {
+            if (pathToChest.length() == 1) {
+                hero.attack(pathToChest);
+            } else {
+                hero.move(pathToChest);
+            }
+        } else {
+            hero.move(getRandomDirection());
+        }
+    }
+
 
     private boolean isStuck(Player player) {
         return player.x == lastPosition.x && player.y == lastPosition.y;
@@ -182,8 +353,9 @@ class MapUpdateListener implements Emitter.Listener {
     }
 
     private List<Node> getNodesToAvoid(GameMap gameMap) {
-        List<Node> nodes = new ArrayList<>();
-        nodes.addAll(gameMap.getObstaclesByTag("CAN_GO_THROUGH"));
+        List<Node> nodes = new ArrayList<>(gameMap.getListObstacleInit());
+
+        nodes.removeAll(gameMap.getObstaclesByTag("CAN_GO_THROUGH"));
         nodes.addAll(gameMap.getOtherPlayerInfo());
         return nodes;
     }
@@ -223,6 +395,74 @@ class MapUpdateListener implements Emitter.Listener {
             }
         }
         return nearestGun;
+    }
+    private String findPathToSpecial(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
+        Weapon nearestSpecial = getNearestSpecial(gameMap, player);
+        if (nearestSpecial == null) return null;
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestSpecial, false);
+    }
+
+    private Weapon getNearestSpecial(GameMap gameMap, Player player) {
+        List<Weapon> specials = gameMap.getAllSpecial();
+        Weapon nearestSpecial = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (Weapon special : specials) {
+            double distance = PathUtils.distance(player, special);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestSpecial = special;
+            }
+        }
+        return nearestSpecial;
+    }
+
+    private Obstacle getNearestChest(GameMap gameMap, Player player) {
+        List<Obstacle> chests = gameMap.getListChests();
+        Obstacle nearestChest = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (Obstacle chest : chests) {
+            double distance = PathUtils.distance(player, chest);
+            if(!PathUtils.checkInsideSafeArea(player, gameMap.getSafeZone(), gameMap.getMapSize())) {
+                continue;
+            }
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestChest = chest;
+            }
+        }
+        return nearestChest;
+    }
+
+    private Weapon getNearestMelee(GameMap gameMap, Player player) {
+        List<Weapon> melees = gameMap.getAllMelee();
+        Weapon nearestMelee = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (Weapon melee : melees) {
+            double distance = PathUtils.distance(player, melee);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestMelee = melee;
+            }
+        }
+        return nearestMelee;
+    }
+
+    private Weapon getNearestThrow(GameMap gameMap, Player player) {
+        List<Weapon> throwables = gameMap.getAllThrowable();
+        Weapon nearestThrow = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (Weapon throwable : throwables) {
+            double distance = PathUtils.distance(player, throwable);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestThrow = throwable;
+            }
+        }
+        return nearestThrow;
     }
 
     private String findPathToOtherPlayer(List<Node> nodesToAvoid, Player player, Player nearestPlayer) {
