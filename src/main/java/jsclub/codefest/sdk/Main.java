@@ -5,6 +5,7 @@ import jsclub.codefest.sdk.algorithm.PathUtils;
 import jsclub.codefest.sdk.base.Node;
 import jsclub.codefest.sdk.model.GameMap;
 import jsclub.codefest.sdk.model.Inventory;
+import jsclub.codefest.sdk.model.equipments.HealingItem;
 import jsclub.codefest.sdk.model.obstacles.Obstacle;
 import jsclub.codefest.sdk.model.players.Player;
 import jsclub.codefest.sdk.model.weapon.Weapon;
@@ -16,7 +17,7 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-    private static final String GAME_ID = "178457";
+    private static final String GAME_ID = "162113";
     private static final String PLAYER_NAME = "lily";
     private static final String SECRET_KEY = "sk-QzpmiqwsQcGzZE9lPPEKqw:vJpcUbwUzYpSSj7QqrqPx4TrjPlYATfg-AnkYisTZN77J5hXRh3xs925DL6KdzgnKEjeWNcS6QAP6KsW-pHnxQ";
 
@@ -49,7 +50,7 @@ class MapUpdateListener implements Emitter.Listener {
             GameMap gameMap = hero.getGameMap();
             gameMap.updateOnUpdateMap(args[0]);
             Player player = gameMap.getCurrentPlayer();
-            Inventory heroInvent = gameMap.getHeroInventory();
+            Inventory heroInvent = hero.getInventory();
 
             if (player == null || player.getHealth() == 0) {
                 System.out.println("Player is dead or data is not available.");
@@ -57,7 +58,8 @@ class MapUpdateListener implements Emitter.Listener {
             }
 
             System.out.println("CurrentPlayer: " + player.getPosition());
-            System.out.println("CurrentInventory: " + gameMap.getHeroInventory());
+            System.out.println("CurrentInventory: " + heroInvent);
+            System.out.println("Bullet list: " + gameMap.getListBullets().toString());
 
             handleStuckDetection(player);
             if (stuckCounter > Main.STUCK_LIMIT) {
@@ -69,22 +71,23 @@ class MapUpdateListener implements Emitter.Listener {
             Player nearestPlayer = getNearestPlayer(gameMap, player);
 
 //            Gun
-            if (gameMap.getHeroInventory().getGun() == null) {
+            if (heroInvent.getGun() == null) {
                 handleSearchForGun(gameMap, player, nodesToAvoid);
             } else {
-//                handleCombatByGun(gameMap, nearestPlayer, nodesToAvoid, player);
-                hero.revokeItem(heroInvent.getGun().getId());
+                handleCombatByGun(nearestPlayer, nodesToAvoid, player);
+//                hero.revokeItem(heroInvent.getGun().getId());
             }
 
             //Melee
-//            if(heroInvent.getSpecial() == null) {
-//                if(findPathToSpecial(gameMap, nodesToAvoid, player) != null) {
-//                    handleSearchForSpecial(gameMap, player, nodesToAvoid);
+//            if(heroInvent.getListHealingItem().size() <= 0) {
+//                if(findPathToHealing(gameMap, nodesToAvoid, player) != null) {
+//                    handleSearchForHealing(gameMap, player, nodesToAvoid);
 //                } else {
 //                    handleFindNearestChest(gameMap, player, nodesToAvoid);
 //                }
 //            } else {
-//                handleCombatBySpecial(gameMap, nearestPlayer, nodesToAvoid, player);
+//                handleCombatBySpecial(nearestPlayer, nodesToAvoid, player);
+//                hero.useItem(heroInvent.getListHealingItem().get(0).getId());
 //            }
 
             System.out.println("game map: "+ gameMap);
@@ -112,8 +115,8 @@ class MapUpdateListener implements Emitter.Listener {
         stuckCounter = 0;
     }
 
-    private boolean shouldDodge(GameMap gameMap, Player nearestPlayer, Player player) {
-        return gameMap.getHeroInventory().getGun() == null &&
+    private boolean shouldDodge(Hero hero, Player nearestPlayer, Player player) {
+        return hero.getInventory().getGun() == null &&
                 nearestPlayer != null &&
                 PathUtils.distance(player, nearestPlayer) <= Main.DODGE_RANGE;
     }
@@ -139,6 +142,21 @@ class MapUpdateListener implements Emitter.Listener {
                 hero.pickupItem();
             } else {
                 hero.move(pathToGun);
+            }
+        } else {
+            hero.move(getRandomDirection());
+        }
+    }
+
+    private void handleSearchForHealing(GameMap gameMap, Player player, List<Node> nodesToAvoid) throws IOException {
+        System.out.println("No Healing found. Searching for a healing.");
+        String pathToHeal = findPathToHealing(gameMap, nodesToAvoid, player);
+
+        if (pathToHeal != null) {
+            if (pathToHeal.isEmpty()) {
+                hero.pickupItem();
+            } else {
+                hero.move(pathToHeal);
             }
         } else {
             hero.move(getRandomDirection());
@@ -203,14 +221,14 @@ class MapUpdateListener implements Emitter.Listener {
         return firstLetter;
     }
 
-    private void handleCombatByGun(GameMap gameMap, Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
+    private void handleCombatByGun(Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
         if (nearestPlayer == null) {
             hero.move(getRandomDirection());
             return;
         }
 
         String pathToEnemy = findPathToOtherPlayer(nodesToAvoid, player, nearestPlayer);
-        String checkString = checkString(pathToEnemy, gameMap.getHeroInventory().getGun().getRange());
+        String checkString = checkString(pathToEnemy, hero.getInventory().getGun().getRange());
         if (checkString != null) {
             System.out.println("Enemy in range. Shooting!");
             hero.shoot(checkString);
@@ -240,8 +258,8 @@ class MapUpdateListener implements Emitter.Listener {
             hero.attack(getRandomDirection());
         }
     }
-    private void handleCombatByThrowable(GameMap gameMap, Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
-        if (gameMap.getHeroInventory().getThrowable()!=null){
+    private void handleCombatByThrowable(Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
+        if (hero.getInventory().getThrowable()!=null){
             if (nearestPlayer == null) {
                 hero.throwItem(getRandomDirection(), 3);
                 return;
@@ -262,11 +280,11 @@ class MapUpdateListener implements Emitter.Listener {
             return;
         }
     }
-    private void handleCombatBySpecial(GameMap gameMap, Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
-        Weapon special = gameMap.getHeroInventory().getSpecial();
-        if (gameMap.getHeroInventory().getSpecial()!=null){
+    private void handleCombatBySpecial(Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
+        Weapon special = hero.getInventory().getSpecial();
+        if (special!=null){
             if (nearestPlayer == null) {
-                hero.useSpecial(getRandomDirection(), special);
+                hero.useSpecial(getRandomDirection());
                 return;
             }
 
@@ -274,12 +292,12 @@ class MapUpdateListener implements Emitter.Listener {
             String checkString = checkString(pathToEnemy, special.getRange());
             if (checkString != null) {
                 System.out.println("Enemy in range. Special!");
-                hero.useSpecial(checkString, special);
+                hero.useSpecial(checkString);
             } else if (pathToEnemy != null) {
                 System.out.println("Moving closer to enemy: " + special.getRange());
                 hero.move(pathToEnemy);
             } else {
-                hero.useSpecial(getRandomDirection(), special);
+                hero.useSpecial(getRandomDirection());
             }
         } else {
             return;
@@ -354,9 +372,10 @@ class MapUpdateListener implements Emitter.Listener {
     }
 
     private List<Node> getNodesToAvoid(GameMap gameMap) {
-        List<Node> nodes = new ArrayList<>(gameMap.getListObstacleInit());
+        List<Node> nodes = new ArrayList<>(gameMap.getListIndestructibles());
 
         nodes.removeAll(gameMap.getObstaclesByTag("CAN_GO_THROUGH"));
+        nodes.addAll(gameMap.getObstaclesByTag("TRAP"));
         nodes.addAll(gameMap.getOtherPlayerInfo());
         return nodes;
     }
@@ -381,6 +400,27 @@ class MapUpdateListener implements Emitter.Listener {
         Weapon nearestGun = getNearestGun(gameMap, player);
         if (nearestGun == null) return null;
         return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestGun, false);
+    }
+
+    private String findPathToHealing(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
+        HealingItem nearestHeal = getNearestHealing(gameMap, player);
+        if (nearestHeal == null) return null;
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestHeal, false);
+    }
+
+    private HealingItem getNearestHealing(GameMap gameMap, Player player) {
+        List<HealingItem> heals = gameMap.getListHealingItems();
+        HealingItem nearestHeal = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (HealingItem heal : heals) {
+            double distance = PathUtils.distance(player, heal);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestHeal = heal;
+            }
+        }
+        return nearestHeal;
     }
 
     private Weapon getNearestGun(GameMap gameMap, Player player) {

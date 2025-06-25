@@ -118,7 +118,7 @@ public class GameMap {
             List<Weapon> newListWeapons = new ArrayList<>();
             List<HealingItem> newListHealingItem = new ArrayList<>();
             List<Armor> newListArmor = new ArrayList<>();
-            // List<Bullet> newListBullets = new ArrayList<>();
+            List<Bullet> newListBullets = new ArrayList<>();
 
             setSafeZone(mapData.safeZone);
 
@@ -163,10 +163,10 @@ public class GameMap {
                     newListArmor.add(armor);
                 }
 
-                // if (entity.type == ElementType.BULLET) {
-                //     Bullet b = new Bullet();
-                //     newListBullets.add(b);
-                // }
+                 if (entity.type == ElementType.BULLET) {
+                     Bullet b = new Bullet(entity.attributes.damage, entity.attributes.speed);
+                     newListBullets.add(b);
+                 }
             }
 
             newListTrap.addAll(listTrapsInit);
@@ -177,6 +177,7 @@ public class GameMap {
             setListWeapons(newListWeapons);
             setListHealingItems(newListHealingItem);
             setListArmors(newListArmor);
+            setListBullets(newListBullets);
 
             setCurrentPlayer(mapData.currentPlayer);
             setOtherPlayerInfo(mapData.otherPlayers);
@@ -282,7 +283,7 @@ public class GameMap {
                 }
             }
 
-            for (Obstacle o : listObstacleInit) {
+            for (Obstacle o : listIndestructibles) {
                 if (o.getTag().contains(t)) {
                     obstacles.add(o);
                 }

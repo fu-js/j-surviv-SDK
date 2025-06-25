@@ -19,8 +19,16 @@ public class Entity {
     @SerializedName("type")
     public ElementType type;
 
-//    @SerializedName("attributes")
-//    public Object attributes;
+    @SerializedName("attributes")
+    public BulletAttributes attributes;
+
+    public class BulletAttributes {
+        @SerializedName("speed")
+        public int speed;
+
+        @SerializedName("damage")
+        public float damage;
+    }
 
     @Override
     public String toString() {

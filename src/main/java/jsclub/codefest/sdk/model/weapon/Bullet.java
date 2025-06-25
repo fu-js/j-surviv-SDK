@@ -5,7 +5,7 @@ import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
 
 public class Bullet extends Element {
-    private int damage = 0;
+    private float damage = 0;
     private int speed = 0;
 
     @SerializedName("destination_x")
@@ -19,14 +19,14 @@ public class Bullet extends Element {
         setType(ElementType.BULLET);
     }
 
-    public Bullet(int damage, int speed) {
+    public Bullet(float damage, int speed) {
         setId("BULLET");
         setType(ElementType.BULLET);
         this.damage = damage;
         this.speed = speed;
     }
     
-    public int getDamage() {
+    public float getDamage() {
         return damage;
     }
 

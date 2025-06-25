@@ -16,7 +16,7 @@ public class ItemData {
         return item.type;
     }
 
-    class Item {
+    public class Item {
         @SerializedName("id")
         public String ID;
 
