@@ -13,10 +13,10 @@ public class ArmorFactory {
      * Available Armors
      */
     private static final Map<String, Armor> armorMap = Map.of(
-        "WOODEN_HELMET", new Armor("WOODEN_HELMET", ElementType.HELMET, 40, 20, 5),
-        "ARMOR", new Armor("ARMOR", ElementType.ARMOR, 30, 50, 20),
-        "MAGIC_HELMET", new Armor("MAGIC_HELMET", ElementType.HELMET, 20, 50, 20),
-            "MAGIC_ARMOR", new Armor ("MAGIC_ARMOR", ElementType.ARMOR , 10, 75, 30)
+        "WOODEN_HELMET", new Armor("WOODEN_HELMET", ElementType.HELMET, 20, 5),
+        "ARMOR", new Armor("ARMOR", ElementType.ARMOR, 50, 20),
+        "MAGIC_HELMET", new Armor("MAGIC_HELMET", ElementType.HELMET, 50, 20),
+            "MAGIC_ARMOR", new Armor ("MAGIC_ARMOR", ElementType.ARMOR , 75, 30)
     );
     /**
      * Find armor by id.

@@ -106,7 +106,7 @@ public class GameMap {
         try {
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
-            System.out.println("MESSAGE UPDATE: " + message);
+//            System.out.println("MESSAGE UPDATE: " + message);
             MapData mapData = gson.fromJson(message, MapData.class);
             System.out.println(mapData);
             List<Obstacle> newListObstacles = new ArrayList<>();
