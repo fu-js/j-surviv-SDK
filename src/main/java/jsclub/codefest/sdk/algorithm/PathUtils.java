@@ -27,13 +27,13 @@ public class PathUtils {
      * @return boolean value.
      */
 
-    public static Node getCenterOfMap(int mapSize) {
-        return new Node(mapSize/2, mapSize/2);
+    public static float getCenterOfMap(int mapSize) {
+        return (float) mapSize/2;
     }
 
     public static boolean checkInsideSafeArea(Node current, int safeZone, int mapSize) {
-        Node center = getCenterOfMap(mapSize);
-        return (Math.abs(current.getX() - center.getX()) < safeZone && Math.abs(current.getY() - center.getY()) < safeZone);
+        float center = getCenterOfMap(mapSize);
+        return (Math.abs(current.getX() - center) <= safeZone && Math.abs(current.getY() - center) <= safeZone);
     }
     /**
      * The algorithm to find the shortest path from the current node to the target node
