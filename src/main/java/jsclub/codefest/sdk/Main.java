@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-    private static final String GAME_ID = "162113";
+    private static final String GAME_ID = "154288";
     private static final String PLAYER_NAME = "lily";
     private static final String SECRET_KEY = "sk-QzpmiqwsQcGzZE9lPPEKqw:vJpcUbwUzYpSSj7QqrqPx4TrjPlYATfg-AnkYisTZN77J5hXRh3xs925DL6KdzgnKEjeWNcS6QAP6KsW-pHnxQ";
 
@@ -59,7 +59,6 @@ class MapUpdateListener implements Emitter.Listener {
 
             System.out.println("CurrentPlayer: " + player.getPosition());
             System.out.println("CurrentInventory: " + heroInvent);
-            System.out.println("Bullet list: " + gameMap.getListBullets().toString());
 
             handleStuckDetection(player);
             if (stuckCounter > Main.STUCK_LIMIT) {
@@ -71,24 +70,22 @@ class MapUpdateListener implements Emitter.Listener {
             Player nearestPlayer = getNearestPlayer(gameMap, player);
 
 //            Gun
-            if (heroInvent.getGun() == null) {
-                handleSearchForGun(gameMap, player, nodesToAvoid);
-            } else {
-                handleCombatByGun(nearestPlayer, nodesToAvoid, player);
-//                hero.revokeItem(heroInvent.getGun().getId());
-            }
+//            if (heroInvent.getGun() == null) {
+//                handleSearchForGun(gameMap, player, nodesToAvoid);
+//            } else {
+//                handleCombatByGun(nearestPlayer, nodesToAvoid, player);
+//            }
 
             //Melee
-//            if(heroInvent.getListHealingItem().size() <= 0) {
-//                if(findPathToHealing(gameMap, nodesToAvoid, player) != null) {
-//                    handleSearchForHealing(gameMap, player, nodesToAvoid);
-//                } else {
-//                    handleFindNearestChest(gameMap, player, nodesToAvoid);
-//                }
-//            } else {
-//                handleCombatBySpecial(nearestPlayer, nodesToAvoid, player);
-//                hero.useItem(heroInvent.getListHealingItem().get(0).getId());
-//            }
+            if(heroInvent.getMelee().getId().compareToIgnoreCase("hand") == 0) {
+                if(findPathToMelee(gameMap, nodesToAvoid, player) != null) {
+                    handleSearchForMelee(gameMap, player, nodesToAvoid);
+                } else {
+                    handleFindNearestChest(gameMap, player, nodesToAvoid);
+                }
+            } else {
+                handleCombatByMelee(nearestPlayer, nodesToAvoid, player);
+            }
 
             System.out.println("game map: "+ gameMap);
 
@@ -240,7 +237,7 @@ class MapUpdateListener implements Emitter.Listener {
         }
     }
 
-    private void handleCombatByMelee(GameMap gameMap, Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
+    private void handleCombatByMelee(Player nearestPlayer, List<Node> nodesToAvoid, Player player) throws IOException {
         if (nearestPlayer == null) {
             hero.attack(getRandomDirection());
             return;
@@ -375,8 +372,9 @@ class MapUpdateListener implements Emitter.Listener {
         List<Node> nodes = new ArrayList<>(gameMap.getListIndestructibles());
 
         nodes.removeAll(gameMap.getObstaclesByTag("CAN_GO_THROUGH"));
-        nodes.addAll(gameMap.getObstaclesByTag("TRAP"));
+        nodes.addAll(gameMap.getListTraps());
         nodes.addAll(gameMap.getOtherPlayerInfo());
+        nodes.addAll(gameMap.getListChests());
         return nodes;
     }
 
@@ -465,7 +463,7 @@ class MapUpdateListener implements Emitter.Listener {
 
         for (Obstacle chest : chests) {
             double distance = PathUtils.distance(player, chest);
-            if(!PathUtils.checkInsideSafeArea(player, gameMap.getSafeZone(), gameMap.getMapSize())) {
+            if(!PathUtils.checkInsideSafeArea(chest, gameMap.getSafeZone(), gameMap.getMapSize())) {
                 continue;
             }
             if (distance < minDistance) {

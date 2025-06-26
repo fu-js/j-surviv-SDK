@@ -28,10 +28,16 @@ public class ItemData {
 
         @SerializedName("durability")
         public Long durability;
+
+        @Override
+        public String toString() {
+            return "id:"+this.ID + ", type:"+ this.type;
+        }
     }
 
     @Override
     public String toString() {
         return new Gson().toJson(this);
     }
+
 }
