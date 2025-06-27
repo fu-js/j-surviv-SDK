@@ -1,10 +1,8 @@
 package jsclub.codefest.sdk.factory;
 
-import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
-import jsclub.codefest.sdk.model.equipments.Armor;
+import jsclub.codefest.sdk.model.armors.Armor;
 
-import java.io.IOException;
 import java.util.Map;
 
 

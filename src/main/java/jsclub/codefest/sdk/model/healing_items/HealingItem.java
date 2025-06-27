@@ -1,4 +1,4 @@
-package jsclub.codefest.sdk.model.equipments;
+package jsclub.codefest.sdk.model.healing_items;
 
 import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;

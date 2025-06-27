@@ -1,7 +1,7 @@
 package jsclub.codefest.sdk.factory;
 
 import jsclub.codefest.sdk.model.ElementType;
-import jsclub.codefest.sdk.model.equipments.HealingItem;
+import jsclub.codefest.sdk.model.healing_items.HealingItem;
 
 import java.util.List;
 import java.util.Map;

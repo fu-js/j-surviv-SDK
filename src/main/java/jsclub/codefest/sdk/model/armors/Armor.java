@@ -1,11 +1,7 @@
-package jsclub.codefest.sdk.model.equipments;
+package jsclub.codefest.sdk.model.armors;
 
 import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
-import jsclub.codefest.sdk.model.effects.Effect;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Armor extends Element {
     private final int damageReduce;
