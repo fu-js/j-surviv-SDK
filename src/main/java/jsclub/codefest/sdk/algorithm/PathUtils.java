@@ -27,12 +27,8 @@ public class PathUtils {
      * @return boolean value.
      */
 
-    public static float getCenterOfMap(int mapSize) {
-        return (float) mapSize/2;
-    }
-
     public static boolean checkInsideSafeArea(Node current, int safeZone, int mapSize) {
-        float center = getCenterOfMap(mapSize);
+        float center = (float) mapSize/2;
         return (Math.abs(current.getX() - center) <= safeZone && Math.abs(current.getY() - center) <= safeZone);
     }
     /**
