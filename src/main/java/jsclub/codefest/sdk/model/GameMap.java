@@ -282,12 +282,6 @@ public class GameMap {
                     obstacles.add(o);
                 }
             }
-
-            for (Obstacle o : listIndestructibles) {
-                if (o.getTag().contains(t)) {
-                    obstacles.add(o);
-                }
-            }
         } catch (IllegalArgumentException | NullPointerException e) {
             throw new RuntimeException(e);
         }
