@@ -7,7 +7,6 @@ import jsclub.codefest.sdk.model.effects.Effect;
 import java.util.List;
 
 public class Weapon extends Element {
-    private int rarity = 0;
     private int pickupPoints = 0;
     private int hitPoints = 0;
     private double cooldown = 0;
@@ -20,9 +19,8 @@ public class Weapon extends Element {
     private List<Effect> effects;
 
 
-    public Weapon(String id, ElementType type, int rarity, int pickupPoints, int hitPoints, double cooldown, int useCounts, int damage, int range, int explosionRange, AttackRange attackRange, Bullet bullet, List<Effect> effects) {
+    public Weapon(String id, ElementType type, int pickupPoints, int hitPoints, double cooldown, int useCounts, int damage, int range, int explosionRange, AttackRange attackRange, Bullet bullet, List<Effect> effects) {
         super(id);
-        this.rarity = rarity;
         this.pickupPoints = pickupPoints;
         this.hitPoints = hitPoints;
         this.cooldown = cooldown;
@@ -43,10 +41,6 @@ public class Weapon extends Element {
 
     public void setEffects(List<Effect> effects) {
         this.effects = effects;
-    }
-
-    public int getRarity() {
-        return rarity;
     }
 
     public int getPickupPoints() {
