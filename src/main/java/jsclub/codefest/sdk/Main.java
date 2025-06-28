@@ -17,9 +17,10 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-    private static final String GAME_ID = "145898";
+        private static final String GAME_ID = "120277";
     private static final String PLAYER_NAME = "lily";
     private static final String SECRET_KEY = "sk-QzpmiqwsQcGzZE9lPPEKqw:vJpcUbwUzYpSSj7QqrqPx4TrjPlYATfg-AnkYisTZN77J5hXRh3xs925DL6KdzgnKEjeWNcS6QAP6KsW-pHnxQ";
+//    private static final String SECRET_KEY = "sk-HbwuDkLNRRya5SvoCKCVVQ:qNGGSN8d82o4m2tGJEWjpyJScDlnCHBn4Gg0K2Zdr9z1f76-9DTGQ5anZytbsN1mpfulkRffk01ukhhf3y7kEg";
 
     public static final int STUCK_LIMIT = 4;
     public static final int DODGE_RANGE = 3;
@@ -66,25 +67,31 @@ class MapUpdateListener implements Emitter.Listener {
 
             List<Node> nodesToAvoid = getNodesToAvoid(gameMap);
             Player nearestPlayer = getNearestPlayer(gameMap, player);
+            System.out.println("Healing items: "+heroInvent.getListHealingItem().size());
 
-//            Gun
-            if (heroInvent.getGun() == null) { //find gun
+            if(heroInvent.getGun() == null) {
                 handleSearchForGun(gameMap, player, nodesToAvoid);
-            } else if(heroInvent.getMelee().getId().compareToIgnoreCase("hand") == 0) { // find melee
-                if(findPathToMelee(gameMap, nodesToAvoid, player) != null) {
+            } else if (heroInvent.getMelee().getId().compareToIgnoreCase("Hand") == 0) { //find gun
+                if(PathUtils.distance(player, nearestPlayer) <= 4) {
+                    handleCombatByGun(nearestPlayer, nodesToAvoid, player);
+                } else if(findPathToHealing(gameMap, nodesToAvoid, player) != null && findPathToHealing(gameMap, nodesToAvoid, player).length() <= 4) {
+                    handleSearchForHealing(gameMap, player, nodesToAvoid);
+                } else if(findPathToMelee(gameMap, nodesToAvoid, player) != null) {
                     handleSearchForMelee(gameMap, player, nodesToAvoid);
                 } else {
                     handleFindNearestChest(gameMap, player, nodesToAvoid);
                 }
-            } else { //combat by both gun and melee
+            } else {
                 if(step == 0) {
                     handleCombatByGun(nearestPlayer, nodesToAvoid, player);
                     step++;
-                } else if(step==1){
+                } else if (step == 1) {
                     handleCombatByMelee(nearestPlayer, nodesToAvoid, player);
                     step = 0;
                 }
             }
+
+
 
 
         } catch (Exception e) {
@@ -382,7 +389,7 @@ class MapUpdateListener implements Emitter.Listener {
         for (Player otherPlayer : otherPlayers) {
             if (otherPlayer.getHealth() > 0) {
                 int distance = PathUtils.distance(player, otherPlayer);
-                if (distance < minDistance) {
+                if (distance < minDistance && PathUtils.checkInsideSafeArea(otherPlayer, gameMap.getSafeZone(), gameMap.getMapSize())) {
                     minDistance = distance;
                     target = otherPlayer;
                 }

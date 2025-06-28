@@ -86,7 +86,7 @@ public class Inventory
         this.setSpecial(null);
         this.setArmor(null);
         this.setHelmet(null);
-        this.setListHealingItem(null);
+        this.setListHealingItem(new ArrayList<>());
 
     }
 
