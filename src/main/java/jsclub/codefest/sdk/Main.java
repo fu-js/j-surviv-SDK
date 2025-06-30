@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-        private static final String GAME_ID = "120277";
+        private static final String GAME_ID = "165600";
     private static final String PLAYER_NAME = "lily";
     private static final String SECRET_KEY = "sk-QzpmiqwsQcGzZE9lPPEKqw:vJpcUbwUzYpSSj7QqrqPx4TrjPlYATfg-AnkYisTZN77J5hXRh3xs925DL6KdzgnKEjeWNcS6QAP6KsW-pHnxQ";
 //    private static final String SECRET_KEY = "sk-HbwuDkLNRRya5SvoCKCVVQ:qNGGSN8d82o4m2tGJEWjpyJScDlnCHBn4Gg0K2Zdr9z1f76-9DTGQ5anZytbsN1mpfulkRffk01ukhhf3y7kEg";
