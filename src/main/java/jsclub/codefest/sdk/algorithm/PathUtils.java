@@ -28,7 +28,7 @@ public class PathUtils {
      */
 
     public static boolean checkInsideSafeArea(Node current, int safeZone, int mapSize) {
-        float center = (float) mapSize/2;
+        float center = (float) (mapSize -1 )/2;
         return (Math.abs(current.getX() - center) <= safeZone && Math.abs(current.getY() - center) <= safeZone);
     }
     /**
