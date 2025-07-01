@@ -17,7 +17,7 @@ public class WeaponFactory {
             Map.entry("TREE_BRANCH", new Weapon("TREE_BRANCH", ElementType.MELEE, 45, 15, 2, 0, 15, 3, 0, AttackRange.SHORT, new Bullet(0, 0), null)),
             Map.entry("HAND", new Weapon("HAND", ElementType.MELEE, 0, 5, 1, 0, 5, 1, 0, AttackRange.SHORT, new Bullet(0, 0), null)),
             Map.entry("BONE", new Weapon("BONE", ElementType.MELEE, 40, 30, 4, 0, 30, 1, 0, AttackRange.SHORT, new Bullet(0, 0), null)),
-            Map.entry("AXE", new Weapon("AXE", ElementType.MELEE, 30, 45, 5, 0, 45, 3, 0, AttackRange.SHORT, new Bullet(0, 0), null)),
+            Map.entry("AXE", new Weapon("AXE", ElementType.MELEE, 30, 40, 5, 0, 40, 3, 0, AttackRange.SHORT, new Bullet(0, 0), null)),
             Map.entry("SCEPTER", new Weapon("SCEPTER", ElementType.GUN, 30, 20, 3, 10, 20, 12, 0, AttackRange.LONG, new Bullet(20, 6), null)),
             Map.entry("SMOKE", new Weapon("SMOKE", ElementType.THROWABLE, 50, 0, 0, 1, 0, 3, 49, AttackRange.MID, new Bullet(0, 6), List.of(EffectFactory.getEffects("BLIND"), EffectFactory.getEffects("INVISIBLE")) )),
             Map.entry("CROSSBOW", new Weapon("CROSSBOW", ElementType.GUN, 30, 30, 4, 6, 30, 8, 0, AttackRange.LONG, new Bullet(30, 4), null)),
