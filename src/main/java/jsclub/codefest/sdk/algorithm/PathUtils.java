@@ -114,7 +114,7 @@ public class PathUtils {
                 if (x < 0 || y < 0 || x >= mapSize || y >= mapSize) continue;
                 if (isRestrictedNodes.get(x).get(y) == 1) continue;
 
-                if (!skipDarkArea && !checkInsideSafeArea(current, safeZone, gameMap.getMapSize()))
+                if (!skipDarkArea && !checkInsideSafeArea(new Node(x, y), safeZone, gameMap.getMapSize()))
                     continue;
 
                 int cost = g.get(u.x).get(u.y) + 1;
