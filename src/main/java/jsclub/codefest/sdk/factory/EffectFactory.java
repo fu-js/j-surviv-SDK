@@ -18,9 +18,7 @@ public class EffectFactory {
         Map.entry("REVERSE", new Effect(10, "REVERSE", 0)),
         Map.entry("REVIVAL", new Effect(0, "REVIVAL", 0)),
         Map.entry("UNDEAD", new Effect(2, "UNDEAD", 0)),
-        Map.entry("CONTROL_IMMUNITY", new Effect(7, "CONTROL_IMMUNITY", 0)),
-        Map.entry("WEAPON_LOCKED", new Effect(20, "WEAPON_LOCKED", 0)),
-        Map.entry("BUFF_DAMAGE", new Effect(-1, "BUFF_DAMAGE", 0))
+        Map.entry("CONTROL_IMMUNITY", new Effect(7, "CONTROL_IMMUNITY", 0))
 );
 
 
