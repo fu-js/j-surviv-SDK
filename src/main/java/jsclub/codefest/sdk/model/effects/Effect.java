@@ -10,7 +10,7 @@ public class Effect {
     public String id;
 
     @SerializedName("duration")
-    public Long duration;
+    public Integer duration;
 
     @SerializedName("level")
     public Integer level;
@@ -18,7 +18,7 @@ public class Effect {
     public Effect() {
     }
 
-    public Effect(Long duration, String id, Integer level) {
+    public Effect(Integer duration, String id, Integer level) {
         this.duration = duration;
         this.id = id;
         this.level = level;
