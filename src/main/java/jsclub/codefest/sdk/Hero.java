@@ -270,7 +270,7 @@ public class Hero {
         Node currentPos = new Node(getGameMap().getCurrentPlayer().x, getGameMap().getCurrentPlayer().y);
         boolean hasItem = hasItem(currentPos.x, currentPos.y);
 
-        System.out.println("hasItem:"+hasItem);
+        //System.out.println("hasItem:"+hasItem);
 
         if (socket == null || !hasItem) {
             System.out.println("DEBUG FROM SDK pickupItem ERROR : Socket is null or current position does not have item");
