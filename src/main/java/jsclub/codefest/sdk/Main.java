@@ -17,13 +17,19 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-        private static final String GAME_ID = "165600";
+    private static final String GAME_ID = "173912";
     private static final String PLAYER_NAME = "lily";
     private static final String SECRET_KEY = "sk-QzpmiqwsQcGzZE9lPPEKqw:vJpcUbwUzYpSSj7QqrqPx4TrjPlYATfg-AnkYisTZN77J5hXRh3xs925DL6KdzgnKEjeWNcS6QAP6KsW-pHnxQ";
 //    private static final String SECRET_KEY = "sk-HbwuDkLNRRya5SvoCKCVVQ:qNGGSN8d82o4m2tGJEWjpyJScDlnCHBn4Gg0K2Zdr9z1f76-9DTGQ5anZytbsN1mpfulkRffk01ukhhf3y7kEg";
 
     public static final int STUCK_LIMIT = 4;
     public static final int DODGE_RANGE = 3;
+
+    // --- NEW CONSTANTS FOR OSCILLATION DETECTION ---
+    public static final int OSCILLATION_HISTORY_SIZE = 5; // How many past positions to remember
+    public static final int OSCILLATION_THRESHOLD = 3;    // How many times it has to oscillate to trigger evasive action
+    public static final int EVASIVE_MANEUVER_DURATION = 2; // How many steps to perform the evasive maneuver
+    // -------------------------------------------------
 
     public static void main(String[] args) throws IOException {
         Hero hero = new Hero(GAME_ID, PLAYER_NAME, SECRET_KEY);
@@ -39,6 +45,13 @@ class MapUpdateListener implements Emitter.Listener {
     private int stuckCounter = 0;
     private Node lastPosition = new Node(-1, -1);
     private int step = 0;
+
+    // --- NEW FIELDS FOR OSCILLATION DETECTION ---
+    private List<Node> positionHistory = new ArrayList<>();
+    private int oscillationCounter = 0;
+    private boolean isPerformingEvasiveManeuver = false;
+    private int evasiveManeuverSteps = 0;
+    // ---------------------------------------------
 
     public MapUpdateListener(Hero hero) {
         this.hero = hero;
@@ -59,40 +72,71 @@ class MapUpdateListener implements Emitter.Listener {
                 return;
             }
 
-            handleStuckDetection(player);
+            System.out.println("Inventory: "+hero.getInventory());
+
+            // --- Update position history first ---
+            updatePositionHistory(player);
+
+            // --- Check for and handle general stuck (no movement at all) ---
+            handleStuckDetection(player); // This detects if the bot is literally not moving
             if (stuckCounter > Main.STUCK_LIMIT) {
-                handleStuck();
+                handleGeneralStuck(); // Renamed for clarity: this is for absolute non-movement
                 return;
             }
 
-            List<Node> nodesToAvoid = getNodesToAvoid(gameMap);
-            Player nearestPlayer = getNearestPlayer(gameMap, player);
-            System.out.println("Healing items: "+heroInvent.getListHealingItem().size());
-
-            if(heroInvent.getGun() == null) {
-                handleSearchForGun(gameMap, player, nodesToAvoid);
-            } else if (heroInvent.getMelee().getId().compareToIgnoreCase("Hand") == 0) { //find gun
-                if(PathUtils.distance(player, nearestPlayer) <= 4) {
-                    handleCombatByGun(nearestPlayer, nodesToAvoid, player);
-                } else if(findPathToHealing(gameMap, nodesToAvoid, player) != null && findPathToHealing(gameMap, nodesToAvoid, player).length() <= 4) {
-                    handleSearchForHealing(gameMap, player, nodesToAvoid);
-                } else if(findPathToMelee(gameMap, nodesToAvoid, player) != null) {
-                    handleSearchForMelee(gameMap, player, nodesToAvoid);
-                } else {
-                    handleFindNearestChest(gameMap, player, nodesToAvoid);
-                }
+            // --- Oscillation Detection and Handling (new core logic) ---
+            if (isPerformingEvasiveManeuver) {
+                performEvasiveManeuver(player);
+                return; // Prioritize evasive maneuver over other actions
             } else {
-                if(step == 0) {
-                    handleCombatByGun(nearestPlayer, nodesToAvoid, player);
-                    step++;
-                } else if (step == 1) {
-                    handleCombatByMelee(nearestPlayer, nodesToAvoid, player);
-                    step = 0;
+                // Only check for oscillation if not already performing an evasive maneuver
+                checkAndInitiateEvasiveManeuver(player);
+                if (isPerformingEvasiveManeuver) { // If a maneuver was just initiated this turn
+                    performEvasiveManeuver(player);
+                    return; // Perform it immediately
                 }
             }
+            // ------------------------------------------
 
+            List<Node> nodesToAvoid = getNodesToAvoid(gameMap);
+            Player nearestPlayer = getNearestPlayer(gameMap, player);
+            System.out.println("Healing items: " + heroInvent.getListHealingItem().size());
 
+            if (heroInvent.getListHealingItem().size() > 0 && player.getHealth() < 80) {
+                hero.useItem(heroInvent.getListHealingItem().get(0).getId());
+            }
 
+            // --- Original game logic follows if no stuck or oscillation issues ---
+//            if (heroInvent.getGun() == null) {
+//                if (heroInvent.getMelee().getId().compareToIgnoreCase("Hand") != 0 && PathUtils.distance(player, nearestPlayer) <= 4) {
+//                    handleCombatByMelee(nearestPlayer, nodesToAvoid, player);
+//                }
+//                handleSearchForGun(gameMap, player, nodesToAvoid);
+//            } else if (heroInvent.getMelee().getId().compareToIgnoreCase("Hand") == 0) {
+//                if (PathUtils.distance(player, nearestPlayer) <= 4) {
+//                    handleCombatByGun(nearestPlayer, nodesToAvoid, player);
+//                } else if (findPathToHealing(gameMap, nodesToAvoid, player) != null && findPathToHealing(gameMap, nodesToAvoid, player).length() <= 4) {
+//                    handleSearchForHealing(gameMap, player, nodesToAvoid);
+//                } else if (findPathToMelee(gameMap, nodesToAvoid, player) != null) {
+//                    handleSearchForMelee(gameMap, player, nodesToAvoid);
+//                } else {
+//                    handleFindNearestChest(gameMap, player, nodesToAvoid);
+//                }
+//            } else {
+//                if (step == 0) {
+//                    handleCombatByGun(nearestPlayer, nodesToAvoid, player);
+//                    step++;
+//                } else if (step == 1) {
+//                    handleCombatByMelee(nearestPlayer, nodesToAvoid, player);
+//                    step = 0;
+//                }
+//            }
+
+            if (findPathToHealing(gameMap, nodesToAvoid, player) != null) {
+                    handleSearchForHealing(gameMap, player, nodesToAvoid);
+                }  else {
+                    handleFindNearestChest(gameMap, player, nodesToAvoid);
+                }
 
         } catch (Exception e) {
             System.err.println("Critical error in call method: " + e.getMessage());
@@ -100,20 +144,153 @@ class MapUpdateListener implements Emitter.Listener {
         }
     }
 
+    /**
+     * Updates the bot's position history.
+     * @param player The current player's state.
+     */
+    private void updatePositionHistory(Player player) {
+        Node currentPos = new Node(player.x, player.y);
+        // Add current position to the front of the list
+        positionHistory.add(0, currentPos);
+        // Trim the list to maintain the desired history size
+        while (positionHistory.size() > Main.OSCILLATION_HISTORY_SIZE) {
+            positionHistory.remove(positionHistory.size() - 1);
+        }
+    }
+
+    /**
+     * Checks if the bot is oscillating and initiates an evasive maneuver if needed.
+     * @param player The current player's state.
+     * @throws IOException
+     */
+    private void checkAndInitiateEvasiveManeuver(Player player) throws IOException {
+        // Need at least 3 positions (current, last, two steps ago) to detect A -> B -> A pattern
+        if (positionHistory.size() >= 3) {
+            Node currentPos = positionHistory.get(0);
+            Node twoStepsAgo = positionHistory.get(2); // Position from two ticks ago
+
+            // A simple oscillation is when current position is the same as two steps ago,
+            // and the previous position was different. (e.g., pos A -> pos B -> pos A)
+            boolean isOscillating = currentPos.equals(twoStepsAgo) && !currentPos.equals(positionHistory.get(1));
+
+            if (isOscillating) {
+                oscillationCounter++;
+                System.out.println("Detected oscillation: " + oscillationCounter + "/" + Main.OSCILLATION_THRESHOLD);
+
+                if (oscillationCounter >= Main.OSCILLATION_THRESHOLD) {
+                    System.out.println("Oscillation threshold reached! Initiating evasive maneuver.");
+                    isPerformingEvasiveManeuver = true;
+                    evasiveManeuverSteps = 0; // Reset steps for the new maneuver
+                    oscillationCounter = 0; // Reset counter for future oscillations
+                }
+            } else {
+                oscillationCounter = 0; // Reset if not oscillating
+            }
+        }
+    }
+
+    /**
+     * Executes the evasive maneuver.
+     * @param player The current player's state.
+     * @throws IOException
+     */
+    private void performEvasiveManeuver(Player player) throws IOException {
+        if (evasiveManeuverSteps < Main.EVASIVE_MANEUVER_DURATION) {
+            String evasiveDirection = getEvasiveDirection(player);
+            if (evasiveDirection != null) {
+                hero.move(evasiveDirection);
+                System.out.println("Performing evasive maneuver, moving: " + evasiveDirection);
+            } else {
+                // Fallback to random if no intelligent evasive direction is found
+                hero.move(getRandomDirection());
+                System.out.println("Performing evasive maneuver (random fallback).");
+            }
+            evasiveManeuverSteps++;
+        } else {
+            isPerformingEvasiveManeuver = false; // Maneuver complete
+            evasiveManeuverSteps = 0; // Reset for next time
+            System.out.println("Evasive maneuver completed.");
+        }
+    }
+
+    /**
+     * Determines a strategic direction to break oscillation.
+     * Prioritizes perpendicular movement.
+     * @param player The current player's state.
+     * @return A direction string ("u", "d", "l", "r") or null if no immediate safe direction.
+     */
+    private String getEvasiveDirection(Player player) {
+        if (positionHistory.size() < 2) {
+            return getRandomDirection(); // Not enough history to determine oscillation axis
+        }
+
+        Node currentPos = positionHistory.get(0);
+        Node prevPos = positionHistory.get(1);
+
+        // Determine the axis of oscillation
+        boolean oscillatingHorizontally = currentPos.y == prevPos.y;
+        boolean oscillatingVertically = currentPos.x == prevPos.x;
+
+        String[] preferredDirections;
+        if (oscillatingHorizontally) { // Moving mostly left/right, try to move up/down
+            preferredDirections = new String[]{"u", "d"};
+        } else if (oscillatingVertically) { // Moving mostly up/down, try to move left/right
+            preferredDirections = new String[]{"l", "r"};
+        } else {
+            // If it's not a pure horizontal/vertical oscillation, a random move might be best.
+            return getRandomDirection(); // Fallback for diagonal or complex oscillations
+        }
+
+        List<Node> nodesToAvoid = getNodesToAvoid(hero.getGameMap()); // Get current obstacles
+
+        // Try preferred directions first (perpendicular to oscillation)
+        for (String dir : preferredDirections) {
+            Node nextPos = getNextPosition(currentPos, dir);
+            // Check if the move is within bounds and not into a static obstacle or a trap
+            if (PathUtils.checkInsideSafeArea(nextPos, hero.getGameMap().getSafeZone(), hero.getGameMap().getMapSize()) &&
+                    !nodesToAvoid.contains(nextPos)) { // Use the more comprehensive nodesToAvoid
+                return dir;
+            }
+        }
+
+        // If preferred directions are blocked, try other directions (still favoring non-oscillating and safe)
+        String[] allDirections = {"u", "d", "l", "r"};
+        for (String dir : allDirections) {
+            Node nextPos = getNextPosition(currentPos, dir);
+            if (PathUtils.checkInsideSafeArea(nextPos, hero.getGameMap().getSafeZone(), hero.getGameMap().getMapSize()) &&
+                    !nodesToAvoid.contains(nextPos)) {
+                // Avoid moving back into the immediate previous position if possible
+                if (!nextPos.equals(prevPos)) {
+                    return dir;
+                }
+            }
+        }
+
+        // As a last resort, if all intelligent moves are blocked, fall back to a random direction.
+        // This might put the bot in a bad spot, but it's better than infinite oscillation.
+        return getRandomDirection();
+    }
+
+
+    /**
+     * Handles the case where the bot is completely stuck (not changing position).
+     * This is separate from oscillatory behavior where it *is* moving, just back and forth.
+     * @throws IOException
+     */
+    private void handleGeneralStuck() throws IOException {
+        System.out.println("Bot is completely stuck (not moving)! Attempting random movement.");
+        hero.move(getRandomDirection());
+        stuckCounter = 0; // Reset stuck counter after attempting to move
+    }
+
     private void handleStuckDetection(Player player) {
         if (isStuck(player)) {
             stuckCounter++;
-            System.out.println("Detected stuck: " + stuckCounter + "/" + Main.STUCK_LIMIT);
+            System.out.println("Detected stuck (no movement): " + stuckCounter + "/" + Main.STUCK_LIMIT);
         } else {
             stuckCounter = 0;
         }
-        updateLastPosition(player);
-    }
-
-    private void handleStuck() throws IOException {
-        System.out.println("Stuck! Attempting random movement.");
-        hero.move(getRandomDirection());
-        stuckCounter = 0;
+        updateLastPosition(player); // This updates the `lastPosition` for the general stuck check
     }
 
     private boolean shouldDodge(Hero hero, Player nearestPlayer, Player player) {
