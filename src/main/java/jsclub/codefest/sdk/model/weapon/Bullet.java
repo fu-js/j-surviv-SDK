@@ -7,23 +7,17 @@ import jsclub.codefest.sdk.model.ElementType;
 public class Bullet extends Element {
     private float damage = 0;
     private int speed = 0;
+    private int destinationX = 0;
+    private int destinationY = 0;
 
-    @SerializedName("destination_x")
-    private final int destinationX = 0;
+    public Bullet(float damage, int speed, int destinationX, int destinationY) {
+        this.setId("BULLET");
+        this.setType(ElementType.BULLET);
 
-    @SerializedName("destination_y")
-    private final int destinationY = 0;
-
-    public Bullet() {
-        setId("BULLET");
-        setType(ElementType.BULLET);
-    }
-
-    public Bullet(float damage, int speed) {
-        setId("BULLET");
-        setType(ElementType.BULLET);
         this.damage = damage;
         this.speed = speed;
+        this.destinationX = destinationX;
+        this.destinationY = destinationY;
     }
     
     public float getDamage() {

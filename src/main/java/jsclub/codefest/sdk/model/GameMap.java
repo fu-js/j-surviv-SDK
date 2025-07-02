@@ -14,6 +14,7 @@ import jsclub.codefest.sdk.model.players.Player;
 import jsclub.codefest.sdk.model.weapon.Bullet;
 import jsclub.codefest.sdk.model.weapon.Weapon;
 import jsclub.codefest.sdk.socket.data.receive_data.Entity;
+import jsclub.codefest.sdk.socket.data.receive_data.EntityAttribute;
 import jsclub.codefest.sdk.socket.data.receive_data.MapData;
 import jsclub.codefest.sdk.util.MsgPackUtil;
 import org.apache.logging.log4j.LogManager;
@@ -166,7 +167,14 @@ public class GameMap {
                 }
 
                  if (entity.type == ElementType.BULLET) {
-                     Bullet b = new Bullet(entity.attributes.damage, entity.attributes.speed);
+                     EntityAttribute entityAttributes = entity.attributes;
+                     Bullet b = new Bullet(
+                             entityAttributes.damage,
+                             entityAttributes.speed,
+                             entityAttributes.destinationX,
+                             entityAttributes.destinationY);
+                     b.setPosition(entity.x, entity.y);
+
                      newListBullets.add(b);
                  }
             }
