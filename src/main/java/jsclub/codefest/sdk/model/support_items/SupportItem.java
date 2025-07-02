@@ -14,14 +14,18 @@ public class SupportItem extends Element {
     private List<Effect>  effects;
 
 
-    public SupportItem(String id, ElementType type, double usageTime, int healingHp, int duration, int point, List<Effect> effects) {
+    /**
+     * Note: Server data will still send HEALING_ITEM but we use SUPPORT_ITEM as default type
+     * since server code cannot be changed.
+     */
+    public SupportItem(String id, double usageTime, int healingHp, int duration, int point, List<Effect> effects) {
         super(id);
         this.duration = duration;
         this.healingHP = healingHp;
         this.usageTime = usageTime;
         this.point = point;
 
-        this.setType(type);
+        this.setType(ElementType.SUPPORT_ITEM);  // Default type set to SUPPORT_ITEM
         this.effects = effects;
     }
 
