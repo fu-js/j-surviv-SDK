@@ -3,11 +3,11 @@ package jsclub.codefest.sdk;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import jsclub.codefest.sdk.base.Node;
-import jsclub.codefest.sdk.factory.HealingItemFactory;
+import jsclub.codefest.sdk.factory.SupportItemFactory;
 import jsclub.codefest.sdk.model.GameMap;
 import jsclub.codefest.sdk.model.Inventory;
 import jsclub.codefest.sdk.model.effects.Effect;
-import jsclub.codefest.sdk.model.healing_items.HealingItem;
+import jsclub.codefest.sdk.model.support_items.SupportItem;
 import jsclub.codefest.sdk.socket.EventName;
 import jsclub.codefest.sdk.socket.SocketClient;
 import jsclub.codefest.sdk.socket.data.emit_data.*;
@@ -284,7 +284,7 @@ public class Hero {
 
     private boolean hasItem(int x, int y) {
         List<Node> listItem = new ArrayList<>();
-        listItem.addAll(getGameMap().getListHealingItems());
+        listItem.addAll(getGameMap().getListSupportItems());
         listItem.addAll(getGameMap().getAllGun());
         listItem.addAll(getGameMap().getAllMelee());
         listItem.addAll(getGameMap().getAllThrowable());
@@ -313,8 +313,8 @@ public class Hero {
 
     public void useItem(String itemId) throws IOException {
         Socket socket = socketClient.getSocket();
-        HealingItem item = HealingItemFactory.getHealingItemById(itemId);
-        int indexOfItem = getInventory().getListHealingItem().indexOf(item);
+        SupportItem item = SupportItemFactory.getSupportItemById(itemId);
+        int indexOfItem = getInventory().getListSupportItem().indexOf(item);
 
         if (itemId.isEmpty() || itemId == null) {
             System.out.println("DEBUG FROM SDK useItem ERROR : itemId is null or empty");
@@ -325,14 +325,14 @@ public class Hero {
             return;
         }
 
-        if (socket == null || getInventory().getListHealingItem().get(indexOfItem) == null) {
+        if (socket == null || getInventory().getListSupportItem().get(indexOfItem) == null) {
             System.out.println("DEBUG FROM SDK useItem ERROR : Socket is null or cannot get item");
             return;
         }
 
-        List<HealingItem> inventAfter = inventory.getListHealingItem();
+        List<SupportItem> inventAfter = inventory.getListSupportItem();
         inventAfter.remove(indexOfItem);
-        inventory.setListHealingItem(inventAfter);
+        inventory.setListSupportItem(inventAfter);
         PlayerUseItemAction botUseItem = new PlayerUseItemAction(itemId);
 
         byte[] bytes = MsgPackUtil.encodeFromObject(botUseItem);

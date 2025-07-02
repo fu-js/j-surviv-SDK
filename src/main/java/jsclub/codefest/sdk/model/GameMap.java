@@ -2,9 +2,10 @@ package jsclub.codefest.sdk.model;
 
 import com.google.gson.Gson;
 import jsclub.codefest.sdk.factory.*;
+import jsclub.codefest.sdk.factory.SupportItemFactory;
 import jsclub.codefest.sdk.model.effects.Effect;
 import jsclub.codefest.sdk.model.armors.Armor;
-import jsclub.codefest.sdk.model.healing_items.HealingItem;
+import jsclub.codefest.sdk.model.support_items.SupportItem;
 import jsclub.codefest.sdk.model.npcs.Ally;
 import jsclub.codefest.sdk.model.npcs.Enemy;
 import jsclub.codefest.sdk.model.obstacles.Obstacle;
@@ -34,7 +35,7 @@ public class GameMap {
     private List<Enemy> listEnemies = new ArrayList<>();
     private List<Ally> listAllies = new ArrayList<>();
     private List<Weapon> listWeapons = new ArrayList<>();
-    private List<HealingItem> listHealingItems = new ArrayList<>();
+    private List<SupportItem> listSupportItems = new ArrayList<>();
     private List<Armor> listArmors = new ArrayList<>();
     private List<Bullet> listBullets = new ArrayList<>();
     private List<Player> otherPlayerInfo = new ArrayList<>();
@@ -116,7 +117,7 @@ public class GameMap {
             List<Enemy> newListEnemies = new ArrayList<>();
             List<Ally> newListAllies = new ArrayList<>();
             List<Weapon> newListWeapons = new ArrayList<>();
-            List<HealingItem> newListHealingItem = new ArrayList<>();
+            List<SupportItem> newListSupportItem = new ArrayList<>();
             List<Armor> newListArmor = new ArrayList<>();
             List<Bullet> newListBullets = new ArrayList<>();
 
@@ -153,8 +154,8 @@ public class GameMap {
                 }
 
                 if (entity.type == ElementType.HEALING_ITEM) {
-                    HealingItem healing = HealingItemFactory.getHealingItem(entity.id, entity.x, entity.y);
-                    newListHealingItem.add(healing);
+                    SupportItem support = SupportItemFactory.getSupportItem(entity.id, entity.x, entity.y);
+                    newListSupportItem.add(support);
                 }
 
                 if (entity.type == ElementType.ARMOR
@@ -175,7 +176,7 @@ public class GameMap {
             setListEnemies(newListEnemies);
             setListAllies(newListAllies);
             setListWeapons(newListWeapons);
-            setListHealingItems(newListHealingItem);
+            setListSupportItems(newListSupportItem);
             setListArmors(newListArmor);
             setListBullets(newListBullets);
 
@@ -240,7 +241,7 @@ public class GameMap {
         element = this.findElementInListByIndex(x, y, this.listWeapons);
         if (element != null) return element;
 
-        element = this.findElementInListByIndex(x, y, this.listHealingItems);
+        element = this.findElementInListByIndex(x, y, this.listSupportItems);
         if (element != null) return element;
 
         element = this.findElementInListByIndex(x, y, this.listArmors);
@@ -359,8 +360,8 @@ public class GameMap {
         return listWeapons;
     }
 
-    public List<HealingItem> getListHealingItems() {
-        return listHealingItems;
+    public List<SupportItem> getListSupportItems() {
+        return listSupportItems;
     }
 
     public List<Armor> getListArmors() {
@@ -415,8 +416,8 @@ public class GameMap {
         this.listWeapons = listWeapons;
     }
 
-    public void setListHealingItems(List<HealingItem> listHealingItems) {
-        this.listHealingItems = listHealingItems;
+    public void setListSupportItems(List<SupportItem> listSupportItems) {
+        this.listSupportItems = listSupportItems;
     }
 
     public void setListArmors(List<Armor> listArmors) {

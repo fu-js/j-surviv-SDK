@@ -1,11 +1,11 @@
-package jsclub.codefest.sdk.model.healing_items;
+package jsclub.codefest.sdk.model.support_items;
 
 import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
 import jsclub.codefest.sdk.model.effects.Effect;
 import java.util.List;
 
-public class HealingItem extends Element {
+public class SupportItem extends Element {
     private int duration;
 
     private final int healingHP;
@@ -14,7 +14,7 @@ public class HealingItem extends Element {
     private List<Effect>  effects;
 
 
-    public HealingItem(String id, ElementType type, double usageTime, int healingHp, int duration, int point, List<Effect> effects) {
+    public SupportItem(String id, ElementType type, double usageTime, int healingHp, int duration, int point, List<Effect> effects) {
         super(id);
         this.duration = duration;
         this.healingHP = healingHp;
@@ -44,4 +44,4 @@ public class HealingItem extends Element {
     public int getPoint() {
         return point;
     }
-}
+} 

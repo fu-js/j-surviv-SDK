@@ -3,7 +3,7 @@ package jsclub.codefest.sdk.socket.event_handler;
 import com.google.gson.Gson;
 import io.socket.emitter.Emitter;
 import jsclub.codefest.sdk.factory.ArmorFactory;
-import jsclub.codefest.sdk.factory.HealingItemFactory;
+import jsclub.codefest.sdk.factory.SupportItemFactory;
 import jsclub.codefest.sdk.factory.WeaponFactory;
 import jsclub.codefest.sdk.model.ElementType;
 import jsclub.codefest.sdk.model.Inventory;
@@ -48,7 +48,7 @@ public class onPlayerInventoryAdd implements Emitter.Listener {
                     inventory.setHelmet(ArmorFactory.getArmorById(id));
                     break;
                 case HEALING_ITEM:
-                    inventory.getListHealingItem().add(HealingItemFactory.getHealingItemById(id));
+                    inventory.getListSupportItem().add(SupportItemFactory.getSupportItemById(id));
                     break;
             }
         } catch (IOException e) {

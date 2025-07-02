@@ -3,7 +3,7 @@ package jsclub.codefest.sdk.model;
 import com.google.gson.Gson;
 import jsclub.codefest.sdk.factory.WeaponFactory;
 import jsclub.codefest.sdk.model.armors.Armor;
-import jsclub.codefest.sdk.model.healing_items.HealingItem;
+import jsclub.codefest.sdk.model.support_items.SupportItem;
 import jsclub.codefest.sdk.model.weapon.Weapon;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class Inventory
     private Weapon special;
     private Armor armor;
     private Armor helmet;
-    private List<HealingItem> listHealingItem = new ArrayList<>();
+    private List<SupportItem> listSupportItem = new ArrayList<>();
 
     public Inventory() {
         // Set default value for melee is HAND
@@ -71,12 +71,12 @@ public class Inventory
         this.armor = armor;
     }
 
-    public List<HealingItem> getListHealingItem() {
-        return listHealingItem;
+    public List<SupportItem> getListSupportItem() {
+        return listSupportItem;
     }
 
-    public void setListHealingItem(List<HealingItem> listHealingItem) {
-        this.listHealingItem = listHealingItem;
+    public void setListSupportItem(List<SupportItem> listSupportItem) {
+        this.listSupportItem = listSupportItem;
     }
 
     public void reset() {
@@ -86,7 +86,7 @@ public class Inventory
         this.setSpecial(null);
         this.setArmor(null);
         this.setHelmet(null);
-        this.setListHealingItem(new ArrayList<>());
+        this.setListSupportItem(new ArrayList<>());
 
     }
 

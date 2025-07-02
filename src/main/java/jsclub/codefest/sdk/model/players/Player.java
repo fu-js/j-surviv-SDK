@@ -2,7 +2,7 @@ package jsclub.codefest.sdk.model.players;
 
 import com.google.gson.annotations.SerializedName;
 import jsclub.codefest.sdk.factory.ArmorFactory;
-import jsclub.codefest.sdk.factory.HealingItemFactory;
+
 import jsclub.codefest.sdk.factory.WeaponFactory;
 import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
