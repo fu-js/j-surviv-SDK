@@ -117,7 +117,6 @@ public class GameMap {
 //            System.out.println("MESSAGE UPDATE: " + message);
             MapData mapData = gson.fromJson(message, MapData.class);
             // System.out.println(mapData);
-            List<Obstacle> newListObstacles = new ArrayList<>();
             List<Obstacle> newListChest = new ArrayList<>();
             List<Obstacle> newListTrap = new ArrayList<>();
 
@@ -188,6 +187,8 @@ public class GameMap {
             newListTrap.addAll(listTrapsInit);
             setListChests(newListChest);
             setListTraps(newListTrap);
+            List<Obstacle> newListObstacles = new ArrayList<>(getListObstacles());
+            setListObstacles(newListObstacles);
             setListEnemies(newListEnemies);
             setListAllies(newListAllies);
             setListWeapons(newListWeapons);
