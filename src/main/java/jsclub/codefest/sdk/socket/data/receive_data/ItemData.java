@@ -16,25 +16,6 @@ public class ItemData {
         return item.type;
     }
 
-    public class Item {
-        @SerializedName("id")
-        public String ID;
-
-        @SerializedName("type")
-        public ElementType type;
-
-        @SerializedName("level")
-        public int level;
-
-        @SerializedName("durability")
-        public Long durability;
-
-        @Override
-        public String toString() {
-            return "id:"+this.ID + ", type:"+ this.type;
-        }
-    }
-
     @Override
     public String toString() {
         return new Gson().toJson(this);

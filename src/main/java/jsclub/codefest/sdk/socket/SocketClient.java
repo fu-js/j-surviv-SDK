@@ -47,7 +47,7 @@ public class SocketClient {
             socket.on(EventName.ON_MAP_INIT, new onMapInit(gameMap));
             socket.on(EventName.ON_MAP_UPDATE, onMapUpdate);
             socket.on(EventName.ON_INVENTORY_ADD,new onPlayerInventoryAdd(heroInventory));
-            socket.on(EventName.ON_INVENTORY_CLEAR,new onplayerInventoryClear(heroInventory));
+            socket.on(EventName.ON_INVENTORY_CLEAR,new onPlayerInventoryClear(heroInventory));
             socket.on(EventName.ON_EFFECT_APPLY,new onPlayerEffectApply(heroEffect, gameMap));
             socket.on(EventName.ON_EFFECT_CLEAR,new onPlayerEffectClear(heroEffect));
             socket.on(EventName.ON_PLAYER_REMOVE, args1 -> {
