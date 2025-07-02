@@ -1,24 +1,20 @@
 package jsclub.codefest.sdk.model.npcs;
 
-import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
 
-public class Ally extends Element {
-    private final int hp;
-    private final int cooldown;
+public class Ally extends NPC {
+    private final int healingHP;
 
-    public Ally(String id, int hp, int cooldown) {
+    public Ally(String id, int healingHP) {
         super(id);
-        this.hp = hp;
-        this.cooldown = cooldown;
+        this.healingHP = healingHP;
         this.setType(ElementType.ALLY);
+
+        // Default values
+        this.setCooldown(20);
     }
 
-    public int getHp() {
-        return hp;
-    }
-
-    public int getCooldown() {
-        return cooldown;
+    public int getHealingHP() {
+        return healingHP;
     }
 }

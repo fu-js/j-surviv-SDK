@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class AllyFactory {
     private static final Map<String, Ally> allyMap = Map.of(
-        "SPIRIT", new Ally("SPIRIT", 50, 10)
+        "SPIRIT", new Ally("SPIRIT", 50)
     );
 
     /**

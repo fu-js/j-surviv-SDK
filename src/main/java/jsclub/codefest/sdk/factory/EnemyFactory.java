@@ -11,8 +11,8 @@ public class EnemyFactory {
     private static final Map<String, Enemy> enemyMap = Map.of(
         "NATIVE", new Enemy("NATIVE", 10),
         "GHOST", new Enemy("GHOST", 10),
-        "LEOPARD", new Enemy("LEOPARD", 5),
-        "ANACONDA", new Enemy("ANACONDA", 5),
+        "LEOPARD", new Enemy("LEOPARD", 15),
+        "ANACONDA", new Enemy("ANACONDA", 25),
         "RHINO", new Enemy("RHINO", 15),
         "GOLEM", new Enemy("GOLEM", 15)
     );
