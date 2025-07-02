@@ -2,50 +2,34 @@ package jsclub.codefest.sdk.model.support_items;
 
 import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
-import jsclub.codefest.sdk.model.effects.Effect;
-import java.util.List;
 
 public class SupportItem extends Element {
-    private int duration;
-
     private final int healingHP;
-    private final double usageTime;
+    private final int usageTime;
     private final int point;
-    private List<Effect>  effects;
-
 
     /**
      * Note: Server data will still send HEALING_ITEM but we use SUPPORT_ITEM as default type
      * since server code cannot be changed.
      */
-    public SupportItem(String id, double usageTime, int healingHp, int duration, int point, List<Effect> effects) {
+    public SupportItem(String id, int usageTime, int healingHP, int point) {
         super(id);
-        this.duration = duration;
-        this.healingHP = healingHp;
+        this.healingHP = healingHP;
         this.usageTime = usageTime;
         this.point = point;
 
         this.setType(ElementType.SUPPORT_ITEM);  // Default type set to SUPPORT_ITEM
-        this.effects = effects;
     }
 
     public int getHealingHP() {
         return healingHP;
     }
 
-    public double getUsageTime() {
+    public int getUsageTime() {
         return usageTime;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public List<Effect>  getEffects() {
-        return effects;
     }
 
     public int getPoint() {
         return point;
     }
-} 
+}

@@ -3,7 +3,6 @@ package jsclub.codefest.sdk.factory;
 import jsclub.codefest.sdk.model.ElementType;
 import jsclub.codefest.sdk.model.support_items.SupportItem;
 
-import java.util.List;
 import java.util.Map;
 
 public class SupportItemFactory {
@@ -13,15 +12,15 @@ public class SupportItemFactory {
      * Server data may still send HEALING_ITEM but SupportItem class handles this internally.
      */
     private static final Map<String, SupportItem> supportItemMap = Map.of(
-        "GOD_LEAF", new SupportItem("GOD_LEAF", 0.5, 10, 0, 5, null),
-        "SPIRIT_TEAR", new SupportItem("SPIRIT_TEAR", 0.5, 15, 0, 15, null),
-        "MERMAID_TAIL", new SupportItem("MERMAID_TAIL", 1, 20, 0, 20, null),
-        "PHOENIX_FEATHERS", new SupportItem("PHOENIX_FEATHERS", 1.5, 40, 0, 25, null),
-        "UNICORN_BLOOD", new SupportItem("UNICORN_BLOOD", 3, 80, 0, 30, null),
-        "ELIXIR", new SupportItem("ELIXIR", 0, 5, 7, 30, List.of(EffectFactory.getEffects("CONTROL_IMMUNITY")) ),
-        "MAGIC", new SupportItem("MAGIC", 0, 0, 5, 30, List.of(EffectFactory.getEffects("INVISIBLE")) ),
-        "ELIXIR_OF_LIFE", new SupportItem("ELIXIR_OF_LIFE", 0, 100, 0, 30, List.of(EffectFactory.getEffects("REVIVAL"), EffectFactory.getEffects("UNDEAD")) ),
-        "COMPASS", new SupportItem("COMPASS", 2, 0, 7, 60, List.of(EffectFactory.getEffects("STUN")) )
+        "GOD_LEAF",         new SupportItem("GOD_LEAF", 1,   10, 5),
+        "SPIRIT_TEAR",      new SupportItem("SPIRIT_TEAR", 1,   15, 15),
+        "MERMAID_TAIL",     new SupportItem("MERMAID_TAIL", 1,   20, 20),
+        "PHOENIX_FEATHERS", new SupportItem("PHOENIX_FEATHERS", 3,   40, 25),
+        "UNICORN_BLOOD",    new SupportItem("UNICORN_BLOOD", 6,   80, 30),
+        "ELIXIR",           new SupportItem("ELIXIR", 0,   5, 30),
+        "MAGIC",            new SupportItem("MAGIC", 0,   0, 30),
+        "ELIXIR_OF_LIFE",   new SupportItem("ELIXIR_OF_LIFE", 0, 100, 30),
+        "COMPASS",          new SupportItem("COMPASS", 4,   0, 60)
     );
 
     /**
@@ -51,4 +50,4 @@ public class SupportItemFactory {
         supportItem.setId(id);
         return supportItem;
     }
-} 
+}
