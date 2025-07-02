@@ -3,8 +3,6 @@ package jsclub.codefest.sdk.model.effects;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-import java.math.BigInteger;
-
 public class Effect {
     @SerializedName("id")
     public String id;
@@ -12,16 +10,12 @@ public class Effect {
     @SerializedName("duration")
     public Integer duration;
 
-    @SerializedName("level")
-    public Integer level;
-
     public Effect() {
     }
 
-    public Effect(Integer duration, String id, Integer level) {
+    public Effect(Integer duration, String id) {
         this.duration = duration;
         this.id = id;
-        this.level = level;
     }
 
     @Override

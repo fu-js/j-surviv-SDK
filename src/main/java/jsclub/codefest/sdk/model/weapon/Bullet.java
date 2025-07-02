@@ -1,6 +1,5 @@
 package jsclub.codefest.sdk.model.weapon;
 
-import com.google.gson.annotations.SerializedName;
 import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
 

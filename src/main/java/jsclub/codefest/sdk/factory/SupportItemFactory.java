@@ -1,6 +1,5 @@
 package jsclub.codefest.sdk.factory;
 
-import jsclub.codefest.sdk.model.ElementType;
 import jsclub.codefest.sdk.model.support_items.SupportItem;
 
 import java.util.Map;

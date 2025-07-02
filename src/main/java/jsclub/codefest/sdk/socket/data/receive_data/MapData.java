@@ -2,9 +2,9 @@ package jsclub.codefest.sdk.socket.data.receive_data;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-
 import jsclub.codefest.sdk.model.obstacles.Obstacle;
 import jsclub.codefest.sdk.model.players.Player;
+
 import java.util.List;
 
 public class MapData {

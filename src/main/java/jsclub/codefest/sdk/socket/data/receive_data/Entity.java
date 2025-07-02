@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import jsclub.codefest.sdk.model.ElementType;
 
-import java.util.List;
-
 public class Entity {
     @SerializedName("x")
     public Integer x;

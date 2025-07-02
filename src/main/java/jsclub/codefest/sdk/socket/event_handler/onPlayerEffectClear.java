@@ -2,7 +2,6 @@ package jsclub.codefest.sdk.socket.event_handler;
 
 import com.google.gson.Gson;
 import io.socket.emitter.Emitter;
-import jsclub.codefest.sdk.factory.EffectFactory;
 import jsclub.codefest.sdk.model.effects.Effect;
 import jsclub.codefest.sdk.socket.data.receive_data.EffectClearData;
 import jsclub.codefest.sdk.util.MsgPackUtil;

@@ -2,15 +2,14 @@ package jsclub.codefest.sdk.model;
 
 import com.google.gson.Gson;
 import jsclub.codefest.sdk.factory.*;
-import jsclub.codefest.sdk.factory.SupportItemFactory;
-import jsclub.codefest.sdk.model.effects.Effect;
 import jsclub.codefest.sdk.model.armors.Armor;
-import jsclub.codefest.sdk.model.support_items.SupportItem;
+import jsclub.codefest.sdk.model.effects.Effect;
 import jsclub.codefest.sdk.model.npcs.Ally;
 import jsclub.codefest.sdk.model.npcs.Enemy;
 import jsclub.codefest.sdk.model.obstacles.Obstacle;
 import jsclub.codefest.sdk.model.obstacles.ObstacleTag;
 import jsclub.codefest.sdk.model.players.Player;
+import jsclub.codefest.sdk.model.support_items.SupportItem;
 import jsclub.codefest.sdk.model.weapon.Bullet;
 import jsclub.codefest.sdk.model.weapon.Weapon;
 import jsclub.codefest.sdk.socket.data.receive_data.Entity;
@@ -288,7 +287,7 @@ public class GameMap {
         try {
             ObstacleTag t = ObstacleTag.valueOf(tag);
             for (Obstacle o : listObstacles) {
-                if (o.getTag().contains(t)) {
+                if (o.getTags().contains(t)) {
                     obstacles.add(o);
                 }
             }

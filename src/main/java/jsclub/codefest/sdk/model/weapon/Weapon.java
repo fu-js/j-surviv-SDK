@@ -2,9 +2,6 @@ package jsclub.codefest.sdk.model.weapon;
 
 import jsclub.codefest.sdk.model.Element;
 import jsclub.codefest.sdk.model.ElementType;
-import jsclub.codefest.sdk.model.effects.Effect;
-
-import java.util.List;
 
 public class Weapon extends Element {
     private int pickupPoints = 0;

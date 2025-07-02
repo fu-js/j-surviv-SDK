@@ -5,7 +5,6 @@ import jsclub.codefest.sdk.model.armors.Armor;
 
 import java.util.Map;
 
-
 public class ArmorFactory {
     /**
      * Available Armors
@@ -14,7 +13,7 @@ public class ArmorFactory {
         "WOODEN_HELMET", new Armor("WOODEN_HELMET", ElementType.HELMET, 20, 5),
         "ARMOR", new Armor("ARMOR", ElementType.ARMOR, 50, 20),
         "MAGIC_HELMET", new Armor("MAGIC_HELMET", ElementType.HELMET, 50, 20),
-            "MAGIC_ARMOR", new Armor ("MAGIC_ARMOR", ElementType.ARMOR , 75, 30)
+        "MAGIC_ARMOR", new Armor ("MAGIC_ARMOR", ElementType.ARMOR , 75, 30)
     );
     /**
      * Find armor by id.
