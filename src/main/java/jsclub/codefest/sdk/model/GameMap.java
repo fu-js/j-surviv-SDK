@@ -27,6 +27,7 @@ public class GameMap {
     private static final Logger log = LogManager.getLogger(GameMap.class);
     private int mapSize = 0;
     private int safeZone = 0;
+    private int stepNumber = 0;
     private List<Obstacle> listObstacles = new ArrayList<>();
     private List<Obstacle> listIndestructibles = new ArrayList<>();
     private List<Obstacle> listChests = new ArrayList<>();
@@ -72,6 +73,9 @@ public class GameMap {
      */
     public void updateOnInitMap(Object arg) {
         try {
+            // Reset step number when initializing map
+            this.stepNumber = 0;
+            
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
             MapData mapData = gson.fromJson(message, MapData.class);
@@ -105,6 +109,9 @@ public class GameMap {
      */
     public void updateOnUpdateMap(Object arg) {
         try {
+            // Increment step number on each update
+            this.stepNumber++;
+            
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
 //            System.out.println("MESSAGE UPDATE: " + message);
@@ -442,6 +449,14 @@ public class GameMap {
 
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
+    }
+
+    public int getStepNumber() {
+        return stepNumber;
+    }
+
+    public void setStepNumber(int stepNumber) {
+        this.stepNumber = stepNumber;
     }
 
     @Override
