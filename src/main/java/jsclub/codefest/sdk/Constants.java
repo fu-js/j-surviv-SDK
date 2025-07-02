@@ -1,5 +1,5 @@
 package jsclub.codefest.sdk;
 
 public class Constants {
-    public static final int STEP_INTERVAL = 0.5;
+    public static final double STEP_INTERVAL = 0.5;
 } 

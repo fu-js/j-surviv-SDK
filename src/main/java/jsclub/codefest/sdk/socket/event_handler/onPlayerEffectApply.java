@@ -31,7 +31,7 @@ public class onPlayerEffectApply implements Emitter.Listener {
             // Calculate affectedAt and estimatedEndAt
             int currentStepNumber = gameMap.getStepNumber();
             effectData.effect.setAffectedAt(currentStepNumber);
-            effectData.effect.setEstimatedEndAt(currentStepNumber + (effectData.effect.duration / Constants.STEP_INTERVAL));
+            effectData.effect.setEstimatedEndAt(currentStepNumber + (int)(effectData.effect.duration / Constants.STEP_INTERVAL));
             
             effects.add(effectData.effect);
 
