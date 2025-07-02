@@ -3,9 +3,12 @@ package jsclub.codefest.sdk.model.npcs;
 import jsclub.codefest.sdk.model.Element;
 
 public abstract class NPC extends Element {
-    private final int speed;          // cell/step
-    private final int attackRange;    // cell
-    private int cooldown;       // step
+    private final int speed;
+    private final int attackRange;
+    private int cooldown;
+
+    private boolean isCooldownActive = false;
+    private int cooldownStepLeft;
 
     public NPC(String id, int speed, int attackRange, int cooldown) {
         super(id);
@@ -32,6 +35,25 @@ public abstract class NPC extends Element {
 
     public int getCooldown() {
         return cooldown;
+    }
+
+    public boolean isCooldownActive() {
+        return isCooldownActive;
+    }
+
+    public int getCooldownStepLeft() {
+        return cooldownStepLeft;
+    }
+
+    public void setCooldownActive(boolean isCooldownActive) {
+        this.isCooldownActive = isCooldownActive;
+    }
+
+    public void setCooldownStepLeft(int cooldownStepLeft) {
+        if (cooldownStepLeft < 0) {
+            throw new IllegalArgumentException("Cooldown steps left cannot be negative");
+        }
+        this.cooldownStepLeft = cooldownStepLeft;
     }
 
     public void setCooldown(int cooldown) {
