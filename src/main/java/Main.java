@@ -18,7 +18,7 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-    private static final String GAME_ID = "178833";
+    private static final String GAME_ID = "170859";
     private static final String PLAYER_NAME = "lily";
     private static final String SECRET_KEY = "sk-QzpmiqwsQcGzZE9lPPEKqw:vJpcUbwUzYpSSj7QqrqPx4TrjPlYATfg-AnkYisTZN77J5hXRh3xs925DL6KdzgnKEjeWNcS6QAP6KsW-pHnxQ";
 //    private static final String SECRET_KEY = "sk-HbwuDkLNRRya5SvoCKCVVQ:qNGGSN8d82o4m2tGJEWjpyJScDlnCHBn4Gg0K2Zdr9z1f76-9DTGQ5anZytbsN1mpfulkRffk01ukhhf3y7kEg";
@@ -79,24 +79,24 @@ class MapUpdateListener implements Emitter.Listener {
             updatePositionHistory(player);
 
             // --- Check for and handle general stuck (no movement at all) ---
-            handleStuckDetection(player); // This detects if the bot is literally not moving
-            if (stuckCounter > Main.STUCK_LIMIT) {
-                handleGeneralStuck(); // Renamed for clarity: this is for absolute non-movement
-                return;
-            }
-
-            // --- Oscillation Detection and Handling (new core logic) ---
-            if (isPerformingEvasiveManeuver) {
-                performEvasiveManeuver(player);
-                return; // Prioritize evasive maneuver over other actions
-            } else {
-                // Only check for oscillation if not already performing an evasive maneuver
-                checkAndInitiateEvasiveManeuver(player);
-                if (isPerformingEvasiveManeuver) { // If a maneuver was just initiated this turn
-                    performEvasiveManeuver(player);
-                    return; // Perform it immediately
-                }
-            }
+//            handleStuckDetection(player); // This detects if the bot is literally not moving
+//            if (stuckCounter > Main.STUCK_LIMIT) {
+//                handleGeneralStuck(); // Renamed for clarity: this is for absolute non-movement
+//                return;
+//            }
+//
+//            // --- Oscillation Detection and Handling (new core logic) ---
+//            if (isPerformingEvasiveManeuver) {
+//                performEvasiveManeuver(player);
+//                return; // Prioritize evasive maneuver over other actions
+//            } else {
+//                // Only check for oscillation if not already performing an evasive maneuver
+//                checkAndInitiateEvasiveManeuver(player);
+//                if (isPerformingEvasiveManeuver) { // If a maneuver was just initiated this turn
+//                    performEvasiveManeuver(player);
+//                    return; // Perform it immediately
+//                }
+//            }
             // ------------------------------------------
 
             List<Node> nodesToAvoid = getNodesToAvoid(gameMap);
@@ -104,7 +104,7 @@ class MapUpdateListener implements Emitter.Listener {
 
             System.out.println("Healing items: " + heroInvent.getListSupportItem().size());
 
-            if (heroInvent.getListSupportItem().size() > 0 && player.getHealth() < 80) {
+            if (heroInvent.getListSupportItem().size() > 0 && player.getHealth() <= 80) {
                 hero.useItem(heroInvent.getListSupportItem().get(0).getId());
             }
 
