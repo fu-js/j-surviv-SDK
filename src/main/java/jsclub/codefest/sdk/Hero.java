@@ -114,8 +114,7 @@ public class Hero {
         Socket socket = socketClient.getSocket();
 
         if (invalidDirection(direction)) {
-            System.out.println("DEBUG FROM SDK move ERROR : Invalid direction");
-            return;
+            throw new IllegalArgumentException("Invalid direction");
         }
 
         if (socket != null) {
@@ -123,7 +122,7 @@ public class Hero {
             byte[] bytes = MsgPackUtil.encodeFromObject(botMove);
             socket.emit(EventName.EMIT_MOVE, (Object) bytes);
         } else {
-            System.out.println("DEBUG FROM SDK move ERROR : Socket is null");
+            throw new IllegalStateException("Socket is null");
         }
     }
 
@@ -138,23 +137,19 @@ public class Hero {
         Socket socket = socketClient.getSocket();
 
         if (direction.isEmpty()) {
-            System.out.println("DEBUG FROM SDK shoot ERROR : direction is null or empty");
-            return;
+            throw new IllegalArgumentException("Direction is null or empty");
         }
 
         if (direction.length() != 1) {
-            System.out.println("DEBUG FROM SDK shoot ERROR : direction string length must be 1");
-            return;
+            throw new IllegalArgumentException("Direction string length must be 1");
         }
 
         if (invalidDirection(direction)) {
-            System.out.println("DEBUG FROM SDK useSpecial ERROR : Invalid direction");
-            return;
+            throw new IllegalArgumentException("Invalid direction");
         }
 
         if (socket == null) {
-            System.out.println("DEBUG FROM SDK useSpecial ERROR : Socket is null or inventory does not have special weapons");
-            return;
+            throw new IllegalStateException("Socket is null or inventory does not have special weapons");
         }
 
         PlayerUseSpecialAction botUseSpecial = new PlayerUseSpecialAction(direction);
@@ -167,23 +162,19 @@ public class Hero {
         Socket socket = socketClient.getSocket();
 
         if (direction.isEmpty() || direction == null) {
-            System.out.println("DEBUG FROM SDK shoot ERROR : direction is null or empty");
-            return;
+            throw new IllegalArgumentException("Direction is null or empty");
         }
 
         if (direction.length() != 1) {
-            System.out.println("DEBUG FROM SDK shoot ERROR : direction string length must be 1");
-            return;
+            throw new IllegalArgumentException("Direction string length must be 1");
         }
 
         if (invalidDirection(direction)) {
-            System.out.println("DEBUG FROM SDK shoot ERROR : Invalid direction");
-            return;
+            throw new IllegalArgumentException("Invalid direction");
         }
 
         if (socket == null || getInventory().getGun() == null) {
-            System.out.println("DEBUG FROM SDK shoot ERROR : Socket is null or inventory does not have gun");
-            return;
+            throw new IllegalStateException("Socket is null or inventory does not have gun");
         }
 
         PlayerShootAction botShoot = new PlayerShootAction(direction);
@@ -203,23 +194,19 @@ public class Hero {
         Socket socket = socketClient.getSocket();
 
         if (direction.isEmpty() || direction == null) {
-            System.out.println("DEBUG FROM SDK attack ERROR : direction is null or empty");
-            return;
+            throw new IllegalArgumentException("Direction is null or empty");
         }
 
         if (direction.length() != 1) {
-            System.out.println("DEBUG FROM SDK attack ERROR : direction string length must be 1");
-            return;
+            throw new IllegalArgumentException("Direction string length must be 1");
         }
 
         if (invalidDirection(direction)) {
-            System.out.println("DEBUG FROM SDK attack ERROR : Invalid direction");
-            return;
+            throw new IllegalArgumentException("Invalid direction");
         }
 
         if (socket == null) {
-            System.out.println("DEBUG FROM SDK shoot ERROR : Socket is null");
-            return;
+            throw new IllegalStateException("Socket is null");
         }
 
         PlayerAttackAction botAttack = new PlayerAttackAction(direction);
@@ -237,21 +224,17 @@ public class Hero {
         Socket socket = socketClient.getSocket();
 
         if (direction.isEmpty() || direction == null) {
-            System.out.println("DEBUG FROM SDK throwItem ERROR : direction is null or empty");
-            return;
+            throw new IllegalArgumentException("Direction is null or empty");
         }
         if (direction.length() != 1) {
-            System.out.println("DEBUG FROM SDK throwItem ERROR : direction string length must be 1");
-            return;
+            throw new IllegalArgumentException("Direction string length must be 1");
         }
         if (invalidDirection(direction)) {
-            System.out.println("DEBUG FROM SDK throwItem ERROR : Invalid direction");
-            return;
+            throw new IllegalArgumentException("Invalid direction");
         }
 
         if (socket == null || getInventory().getThrowable() == null) {
-            System.out.println("DEBUG FROM SDK throwItem ERROR : Socket is null or inventory does not have throwable");
-            return;
+            throw new IllegalStateException("Socket is null or inventory does not have throwable");
         }
 
         PlayerThrowItemAction botThrow = new PlayerThrowItemAction(direction);
@@ -274,8 +257,7 @@ public class Hero {
         //System.out.println("hasItem:"+hasItem);
 
         if (socket == null || !hasItem) {
-            System.out.println("DEBUG FROM SDK pickupItem ERROR : Socket is null or current position does not have item");
-            return;
+            throw new IllegalStateException("Socket is null or current position does not have item");
         }
 
         String data = "{}";
@@ -318,17 +300,14 @@ public class Hero {
         int indexOfItem = getInventory().getListSupportItem().indexOf(item);
 
         if (itemId.isEmpty() || itemId == null) {
-            System.out.println("DEBUG FROM SDK useItem ERROR : itemId is null or empty");
-            return;
+            throw new IllegalArgumentException("ItemId is null or empty");
         }
         if (indexOfItem == -1) {
-            System.out.println("DEBUG FROM SDK useItem ERROR : Inventory does not have " + item.getId());
-            return;
+            throw new IllegalArgumentException("Inventory does not have " + item.getId());
         }
 
         if (socket == null || getInventory().getListSupportItem().get(indexOfItem) == null) {
-            System.out.println("DEBUG FROM SDK useItem ERROR : Socket is null or cannot get item");
-            return;
+            throw new IllegalStateException("Socket is null or cannot get item");
         }
 
         List<SupportItem> inventAfter = inventory.getListSupportItem();
@@ -350,13 +329,11 @@ public class Hero {
         Socket socket = socketClient.getSocket();
 
         if (itemId.isEmpty() || itemId == null) {
-            System.out.println("DEBUG FROM SDK revokeItem ERROR : itemId is null or empty");
-            return;
+            throw new IllegalArgumentException("ItemId is null or empty");
         }
 
         if(socket == null){
-            System.out.println("DEBUG FROM SDK revokeItem ERROR : Socket is null");
-            return;
+            throw new IllegalStateException("Socket is null");
         }
 
         PlayerRevokeItemAction botRevokeItem = new PlayerRevokeItemAction(itemId);
