@@ -23,12 +23,11 @@ public class Obstacle extends Element {
         this.setType(type);
     }
 
-
     public int getHp() {
         return hp;
     }
 
-    public List<ObstacleTag> getTag() {
+    public List<ObstacleTag> getTags() {
         return tags;
     }
 
@@ -36,7 +35,7 @@ public class Obstacle extends Element {
         this.hp = hp;
     }
 
-    public void setTag(List<ObstacleTag> tags) {
-        this.tags = tags;
-    }
+    // public void setTags(List<ObstacleTag> tags) {
+    //     this.tags = tags;
+    // }
 }
