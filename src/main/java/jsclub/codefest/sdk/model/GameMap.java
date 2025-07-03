@@ -156,8 +156,7 @@ public class GameMap {
                     newListWeapons.add(weapon);
                 }
 
-                if (entity.type == ElementType.HEALING_ITEM) {
-                    // Note: Server sends HEALING_ITEM for support items, but SDK creates them as SUPPORT_ITEM internally
+                if (entity.type == ElementType.SUPPORT_ITEM) {
                     SupportItem support = SupportItemFactory.getSupportItem(entity.id, entity.x, entity.y);
                     newListSupportItem.add(support);
                 }
