@@ -28,8 +28,9 @@ public class PathUtils {
      */
 
     public static boolean checkInsideSafeArea(Node current, int safeZone, int mapSize) {
-        float center = (float) (mapSize -1 )/2;
-        return (Math.abs(current.getX() - center) <= safeZone && Math.abs(current.getY() - center) <= safeZone);
+        int darkAreaSize = (mapSize - (safeZone * 2)) / 2;
+        return (current.x >= darkAreaSize && current.x < mapSize - darkAreaSize &&
+                current.y >= darkAreaSize && current.y < mapSize - darkAreaSize);
     }
     /**
      * The algorithm to find the shortest path from the current node to the target node
