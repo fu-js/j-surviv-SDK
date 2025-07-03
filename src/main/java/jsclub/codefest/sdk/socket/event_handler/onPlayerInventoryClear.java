@@ -47,8 +47,7 @@ public class onPlayerInventoryClear implements Emitter.Listener {
                 case HELMET:
                     inventory.setHelmet(null);
                     break;
-                case HEALING_ITEM:
-                    // Note: Server sends HEALING_ITEM for support items, but SDK creates them as SUPPORT_ITEM internally
+                case SUPPORT_ITEM:
                     inventory.getListSupportItem().remove(SupportItemFactory.getSupportItemById(id));
                     break;
             }

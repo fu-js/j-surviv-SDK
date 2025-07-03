@@ -8,10 +8,6 @@ public class SupportItem extends Element {
     private final int usageTime;
     private final int point;
 
-    /**
-     * Note: Server data will still send HEALING_ITEM but we use SUPPORT_ITEM as default type
-     * since server code cannot be changed.
-     */
     public SupportItem(String id, int usageTime, int healingHP, int point) {
         super(id);
         this.healingHP = healingHP;

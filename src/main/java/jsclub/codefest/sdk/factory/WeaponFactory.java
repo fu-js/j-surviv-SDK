@@ -19,10 +19,10 @@ public class WeaponFactory {
             Map.entry("MACE", new Weapon("MACE", ElementType.MELEE, 60, 60, 10, 60, new int[]{3, 3}, -1, -1, 2)),
             
             // Gun Weapons
-            Map.entry("SCEPTER", new Weapon("SCEPTER", ElementType.GUN, 30, 20, 3, 20, new int[]{1, 12}, -1, 3, 10)),
-            Map.entry("CROSSBOW", new Weapon("CROSSBOW", ElementType.GUN, 30, 30, 4, 30, new int[]{1, 8}, -1, 2, 6)),
-            Map.entry("RUBBER_GUN", new Weapon("RUBBER_GUN", ElementType.GUN, 40, 15, 2, 15, new int[]{1, 6}, -1, 2, 8)),
-            Map.entry("SHOTGUN", new Weapon("SHOTGUN", ElementType.GUN, 20, 45, 8, 45, new int[]{1, 2}, -1, 4, 4)),
+            Map.entry("SCEPTER", new Weapon("SCEPTER", ElementType.GUN, 30, 20, 3, 20, new int[]{1, 12}, -1, 12, 10)),
+            Map.entry("CROSSBOW", new Weapon("CROSSBOW", ElementType.GUN, 30, 30, 4, 30, new int[]{1, 8}, -1, 8, 6)),
+            Map.entry("RUBBER_GUN", new Weapon("RUBBER_GUN", ElementType.GUN, 40, 15, 2, 15, new int[]{1, 6}, -1, 8, 8)),
+            Map.entry("SHOTGUN", new Weapon("SHOTGUN", ElementType.GUN, 20, 45, 8, 45, new int[]{1, 2}, -1, 16, 4)),
             
             // Throwable Weapons
             Map.entry("BANANA", new Weapon("BANANA", ElementType.THROWABLE, 35, 30, 4, 30, new int[]{1, 6}, 3, 3, 2)),

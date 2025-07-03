@@ -49,8 +49,7 @@ public class onPlayerInventoryUpdate implements Emitter.Listener {
                         case HELMET:
                             heroInventory.setHelmet(ArmorFactory.getArmorById(id));
                             break;
-                        case HEALING_ITEM:
-                            // Note: Server sends HEALING_ITEM for support items, but SDK creates them as SUPPORT_ITEM internally
+                        case SUPPORT_ITEM:
                             heroInventory.getListSupportItem().add(SupportItemFactory.getSupportItemById(id));
                             break;
                     }
@@ -75,8 +74,7 @@ public class onPlayerInventoryUpdate implements Emitter.Listener {
                         case HELMET:
                             heroInventory.setHelmet(null);
                             break;
-                        case HEALING_ITEM:
-                            // Note: Server sends HEALING_ITEM for support items, but SDK creates them as SUPPORT_ITEM internally
+                        case SUPPORT_ITEM:
                             heroInventory.getListSupportItem().remove(SupportItemFactory.getSupportItemById(id));
                             break;
                     }

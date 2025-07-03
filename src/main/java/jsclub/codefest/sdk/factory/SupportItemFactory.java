@@ -5,11 +5,6 @@ import jsclub.codefest.sdk.model.support_items.SupportItem;
 import java.util.Map;
 
 public class SupportItemFactory {
-    /**
-     * Available SupportItems
-     * Note: All SupportItems now use SUPPORT_ITEM type by default. 
-     * Server data may still send HEALING_ITEM but SupportItem class handles this internally.
-     */
     private static final Map<String, SupportItem> supportItemMap = Map.of(
         "GOD_LEAF",         new SupportItem("GOD_LEAF", 1,   10, 5),
         "SPIRIT_TEAR",      new SupportItem("SPIRIT_TEAR", 1,   15, 15),
