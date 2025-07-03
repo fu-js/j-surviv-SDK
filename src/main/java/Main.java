@@ -49,9 +49,6 @@ class MapUpdateListener implements Emitter.Listener {
 
     // --- NEW FIELDS FOR OSCILLATION DETECTION ---
     private List<Node> positionHistory = new ArrayList<>();
-    private int oscillationCounter = 0;
-    private boolean isPerformingEvasiveManeuver = false;
-    private int evasiveManeuverSteps = 0;
     // ---------------------------------------------
 
     public MapUpdateListener(Hero hero) {
@@ -79,25 +76,11 @@ class MapUpdateListener implements Emitter.Listener {
             updatePositionHistory(player);
 
             // --- Check for and handle general stuck (no movement at all) ---
-//            handleStuckDetection(player); // This detects if the bot is literally not moving
-//            if (stuckCounter > Main.STUCK_LIMIT) {
-//                handleGeneralStuck(); // Renamed for clarity: this is for absolute non-movement
-//                return;
-//            }
-//
-//            // --- Oscillation Detection and Handling (new core logic) ---
-//            if (isPerformingEvasiveManeuver) {
-//                performEvasiveManeuver(player);
-//                return; // Prioritize evasive maneuver over other actions
-//            } else {
-//                // Only check for oscillation if not already performing an evasive maneuver
-//                checkAndInitiateEvasiveManeuver(player);
-//                if (isPerformingEvasiveManeuver) { // If a maneuver was just initiated this turn
-//                    performEvasiveManeuver(player);
-//                    return; // Perform it immediately
-//                }
-//            }
-            // ------------------------------------------
+            handleStuckDetection(player); // This detects if the bot is literally not moving
+            if (stuckCounter > Main.STUCK_LIMIT) {
+                handleGeneralStuck(); // Renamed for clarity: this is for absolute non-movement
+                return;
+            }
 
             List<Node> nodesToAvoid = getNodesToAvoid(gameMap);
             Player nearestPlayer = getNearestPlayer(gameMap, player);
@@ -168,55 +151,12 @@ class MapUpdateListener implements Emitter.Listener {
      * @param player The current player's state.
      * @throws IOException
      */
-    private void checkAndInitiateEvasiveManeuver(Player player) throws IOException {
-        // Need at least 3 positions (current, last, two steps ago) to detect A -> B -> A pattern
-        if (positionHistory.size() >= 3) {
-            Node currentPos = positionHistory.get(0);
-            Node twoStepsAgo = positionHistory.get(2); // Position from two ticks ago
-
-            // A simple oscillation is when current position is the same as two steps ago,
-            // and the previous position was different. (e.g., pos A -> pos B -> pos A)
-            boolean isOscillating = currentPos.equals(twoStepsAgo) && !currentPos.equals(positionHistory.get(1));
-
-            if (isOscillating) {
-                oscillationCounter++;
-                System.out.println("Detected oscillation: " + oscillationCounter + "/" + Main.OSCILLATION_THRESHOLD);
-
-                if (oscillationCounter >= Main.OSCILLATION_THRESHOLD) {
-                    System.out.println("Oscillation threshold reached! Initiating evasive maneuver.");
-                    isPerformingEvasiveManeuver = true;
-                    evasiveManeuverSteps = 0; // Reset steps for the new maneuver
-                    oscillationCounter = 0; // Reset counter for future oscillations
-                }
-            } else {
-                oscillationCounter = 0; // Reset if not oscillating
-            }
-        }
-    }
 
     /**
      * Executes the evasive maneuver.
      * @param player The current player's state.
      * @throws IOException
      */
-    private void performEvasiveManeuver(Player player) throws IOException {
-        if (evasiveManeuverSteps < Main.EVASIVE_MANEUVER_DURATION) {
-            String evasiveDirection = getEvasiveDirection(player);
-            if (evasiveDirection != null) {
-                hero.move(evasiveDirection);
-                System.out.println("Performing evasive maneuver, moving: " + evasiveDirection);
-            } else {
-                // Fallback to random if no intelligent evasive direction is found
-                hero.move(getRandomDirection());
-                System.out.println("Performing evasive maneuver (random fallback).");
-            }
-            evasiveManeuverSteps++;
-        } else {
-            isPerformingEvasiveManeuver = false; // Maneuver complete
-            evasiveManeuverSteps = 0; // Reset for next time
-            System.out.println("Evasive maneuver completed.");
-        }
-    }
 
     /**
      * Determines a strategic direction to break oscillation.
@@ -224,57 +164,6 @@ class MapUpdateListener implements Emitter.Listener {
      * @param player The current player's state.
      * @return A direction string ("u", "d", "l", "r") or null if no immediate safe direction.
      */
-    private String getEvasiveDirection(Player player) {
-        if (positionHistory.size() < 2) {
-            return getRandomDirection(); // Not enough history to determine oscillation axis
-        }
-
-        Node currentPos = positionHistory.get(0);
-        Node prevPos = positionHistory.get(1);
-
-        // Determine the axis of oscillation
-        boolean oscillatingHorizontally = currentPos.y == prevPos.y;
-        boolean oscillatingVertically = currentPos.x == prevPos.x;
-
-        String[] preferredDirections;
-        if (oscillatingHorizontally) { // Moving mostly left/right, try to move up/down
-            preferredDirections = new String[]{"u", "d"};
-        } else if (oscillatingVertically) { // Moving mostly up/down, try to move left/right
-            preferredDirections = new String[]{"l", "r"};
-        } else {
-            // If it's not a pure horizontal/vertical oscillation, a random move might be best.
-            return getRandomDirection(); // Fallback for diagonal or complex oscillations
-        }
-
-        List<Node> nodesToAvoid = getNodesToAvoid(hero.getGameMap()); // Get current obstacles
-
-        // Try preferred directions first (perpendicular to oscillation)
-        for (String dir : preferredDirections) {
-            Node nextPos = getNextPosition(currentPos, dir);
-            // Check if the move is within bounds and not into a static obstacle or a trap
-            if (PathUtils.checkInsideSafeArea(nextPos, hero.getGameMap().getSafeZone(), hero.getGameMap().getMapSize()) &&
-                    !nodesToAvoid.contains(nextPos)) { // Use the more comprehensive nodesToAvoid
-                return dir;
-            }
-        }
-
-        // If preferred directions are blocked, try other directions (still favoring non-oscillating and safe)
-        String[] allDirections = {"u", "d", "l", "r"};
-        for (String dir : allDirections) {
-            Node nextPos = getNextPosition(currentPos, dir);
-            if (PathUtils.checkInsideSafeArea(nextPos, hero.getGameMap().getSafeZone(), hero.getGameMap().getMapSize()) &&
-                    !nodesToAvoid.contains(nextPos)) {
-                // Avoid moving back into the immediate previous position if possible
-                if (!nextPos.equals(prevPos)) {
-                    return dir;
-                }
-            }
-        }
-
-        // As a last resort, if all intelligent moves are blocked, fall back to a random direction.
-        // This might put the bot in a bad spot, but it's better than infinite oscillation.
-        return getRandomDirection();
-    }
 
 
     /**
