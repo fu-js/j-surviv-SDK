@@ -45,4 +45,12 @@ public class EnemyFactory {
 
         return enemy;
     }
+
+    public static Enemy getEnemy(String id, int x, int y, boolean isCooldownActive, int cooldownStepLeft) throws CloneNotSupportedException {
+        Enemy enemyBase = getEnemy(id, x, y);
+        enemyBase.setCooldownActive(isCooldownActive);
+        enemyBase.setCooldownStepLeft(cooldownStepLeft);
+
+        return enemyBase;
+    }
 }

@@ -30,9 +30,6 @@ public class GameMap {
     private int stepNumber = 0;
     private List<Obstacle> listObstacles = new ArrayList<>();
     private List<Obstacle> listIndestructibles = new ArrayList<>();
-    private List<Obstacle> listChests = new ArrayList<>();
-    private List<Obstacle> listTrapsInit = new ArrayList<>();
-    private List<Obstacle> listTraps = new ArrayList<>(); // chưa xong -> Chưa merge được 2 Traps
     private List<Enemy> listEnemies = new ArrayList<>();
     private List<Ally> listAllies = new ArrayList<>();
     private List<Weapon> listWeapons = new ArrayList<>();
@@ -81,21 +78,17 @@ public class GameMap {
             MapData mapData = gson.fromJson(message, MapData.class);
             setMapSize(mapData.mapSize);
 
+            // Because on map init, game will send indestructible obstacles so we add them to listIndestructibles.
             List<Obstacle> newListIndestructibles = new ArrayList<>();
-            List<Obstacle> newListTrapsInit = new ArrayList<>();
 
             for (Obstacle o : mapData.listObstacles){
                 Obstacle obstacle = ObstacleFactory.getObstacle(o.getId(), o.x, o.y);
-                if (obstacle.getType() == ElementType.TRAP)
-                    newListTrapsInit.add(obstacle);
-                else
-                    newListIndestructibles.add(obstacle);
+                newListIndestructibles.add(obstacle);
             }
+
             setListIndestructibles(newListIndestructibles);
-            setListTrapsInit(newListTrapsInit);
-
-
-//            System.out.println("mapData: "+this.listObstaclesInit);
+            // Initialize the lists with indestructible obstacles
+            setListObstacles(newListIndestructibles);
         } catch (CloneNotSupportedException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -114,13 +107,12 @@ public class GameMap {
             
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
-//            System.out.println("MESSAGE UPDATE: " + message);
             MapData mapData = gson.fromJson(message, MapData.class);
-            // System.out.println(mapData);
-            List<Obstacle> newListObstacles = new ArrayList<>();
-            List<Obstacle> newListChest = new ArrayList<>();
-            List<Obstacle> newListTrap = new ArrayList<>();
 
+            // Extend listObstacles with listIndestructibles (get from init map)
+            List<Obstacle> newListObstacles = new ArrayList<>(listIndestructibles);
+
+            // Initialize new lists for each type of entity
             List<Enemy> newListEnemies = new ArrayList<>();
             List<Ally> newListAllies = new ArrayList<>();
             List<Weapon> newListWeapons = new ArrayList<>();
@@ -131,24 +123,28 @@ public class GameMap {
             setSafeZone(mapData.safeZone);
 
             for (Entity entity : mapData.listEntities) {
-
+                // On game update will send all changeable obstacles, for 2025 version, we only have chests and traps.
                 if (entity.type == ElementType.CHEST) {
                     Obstacle obstacle = ObstacleFactory.getObstacle(entity.id, entity.x, entity.y);
-                    newListChest.add(obstacle);
+                    // Set hp for CHEST obstacle
+                    obstacle.setCurrentHp(entity.attributes.currentHp);
+                    newListObstacles.add(obstacle);
                 }
 
                 if (entity.type == ElementType.TRAP) {
                     Obstacle obstacle = ObstacleFactory.getObstacle(entity.id, entity.x, entity.y);
-                    newListTrap.add(obstacle);
+                    newListObstacles.add(obstacle);
                 }
 
                 if (entity.type == ElementType.ENEMY) {
-                    Enemy enemy = EnemyFactory.getEnemy(entity.id, entity.x, entity.y);
+                    Enemy enemy = EnemyFactory.getEnemy(entity.id, entity.x, entity.y,
+                            entity.attributes.isCooldownActive, entity.attributes.cooldownStepLeft);
                     newListEnemies.add(enemy);
                 }
 
                 if (entity.type == ElementType.ALLY) {
-                    Ally ally = AllyFactory.getAlly(entity.id, entity.x, entity.y);
+                    Ally ally = AllyFactory.getAlly(entity.id, entity.x, entity.y,
+                            entity.attributes.isCooldownActive, entity.attributes.cooldownStepLeft);
                     newListAllies.add(ally);
                 }
 
@@ -185,9 +181,8 @@ public class GameMap {
                  }
             }
 
-            newListTrap.addAll(listTrapsInit);
-            setListChests(newListChest);
-            setListTraps(newListTrap);
+            // Update the lists in GameMap
+            setListObstacles(newListObstacles);
             setListEnemies(newListEnemies);
             setListAllies(newListAllies);
             setListWeapons(newListWeapons);
@@ -205,31 +200,6 @@ public class GameMap {
         } catch (CloneNotSupportedException | IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-
-    public List<Obstacle> getListChests() {
-        return listChests;
-    }
-
-    public void setListChests(List<Obstacle> listChests) {
-        this.listChests = listChests;
-    }
-
-    public List<Obstacle> getListTraps() {
-        return listTraps;
-    }
-
-    public void setListTraps(List<Obstacle> listTraps) {
-        this.listTraps = listTraps;
-    }
-
-    private List<Obstacle> getListTrapsInit() {
-        return listTrapsInit;
-    }
-
-    public void setListTrapsInit(List<Obstacle> listTrapsInit) {
-        this.listTrapsInit = listTrapsInit;
     }
 
     /**
@@ -353,13 +323,6 @@ public class GameMap {
     }
 
     public List<Obstacle> getListObstacles() {
-        List<Obstacle> listObstacles = new ArrayList<>(listIndestructibles);
-        try {
-            listObstacles.addAll(listChests);
-            listObstacles.addAll(listTraps);
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new RuntimeException(e);
-        }
         return listObstacles;
     }
 

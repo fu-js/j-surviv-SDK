@@ -16,8 +16,11 @@ public class EntityAttribute {
     public int destinationY;
 
     @SerializedName("is_cooldown")
-    public boolean isCooldown;
+    public boolean isCooldownActive;
 
     @SerializedName("cooldown_step_left")
     public int cooldownStepLeft;
+
+    @SerializedName("current_hp")
+    public int currentHp;
 }

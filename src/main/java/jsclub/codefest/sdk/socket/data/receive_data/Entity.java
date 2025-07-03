@@ -6,10 +6,10 @@ import jsclub.codefest.sdk.model.ElementType;
 
 public class Entity {
     @SerializedName("x")
-    public Integer x;
+    public int x;
 
     @SerializedName("y")
-    public Integer y;
+    public int y;
 
     @SerializedName("id")
     public String id;

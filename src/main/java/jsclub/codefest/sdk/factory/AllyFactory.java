@@ -37,4 +37,12 @@ public class AllyFactory {
 
         return ally;
     }
+
+    public static Ally getAlly(String id, int x, int y, boolean isCooldownActive, int cooldownStepLeft) throws CloneNotSupportedException {
+        Ally allyBase = getAlly(id, x, y);
+        allyBase.setCooldownActive(isCooldownActive);
+        allyBase.setCooldownStepLeft(cooldownStepLeft);
+
+        return allyBase;
+    }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 public class Obstacle extends Element {
     private int hp = -1;
     private List<ObstacleTag> tags = new ArrayList<>();
+    private int currentHp = -1;
 
     public Obstacle(String id, ElementType type, List<ObstacleTag> tags , int hp) {
         super(id);
@@ -27,6 +28,14 @@ public class Obstacle extends Element {
         return hp;
     }
 
+    public int getCurrentHp() {
+        return currentHp;
+    }
+
+    public void setCurrentHp(int currentHp) {
+        this.currentHp = currentHp;
+    }
+
     public List<ObstacleTag> getTags() {
         return tags;
     }
@@ -34,8 +43,4 @@ public class Obstacle extends Element {
     public void setHp(int hp) {
         this.hp = hp;
     }
-
-    // public void setTags(List<ObstacleTag> tags) {
-    //     this.tags = tags;
-    // }
 }
