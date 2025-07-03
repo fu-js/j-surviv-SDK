@@ -3,7 +3,7 @@ package jsclub.codefest.sdk.socket.event_handler;
 import com.google.gson.Gson;
 import io.socket.emitter.Emitter;
 import jsclub.codefest.sdk.factory.ArmorFactory;
-import jsclub.codefest.sdk.factory.HealingItemFactory;
+import jsclub.codefest.sdk.factory.SupportItemFactory;
 import jsclub.codefest.sdk.factory.WeaponFactory;
 import jsclub.codefest.sdk.model.ElementType;
 import jsclub.codefest.sdk.model.Inventory;
@@ -49,8 +49,8 @@ public class onPlayerInventoryUpdate implements Emitter.Listener {
                         case HELMET:
                             heroInventory.setHelmet(ArmorFactory.getArmorById(id));
                             break;
-                        case HEALING_ITEM:
-                            heroInventory.getListHealingItem().add(HealingItemFactory.getHealingItemById(id));
+                        case SUPPORT_ITEM:
+                            heroInventory.getListSupportItem().add(SupportItemFactory.getSupportItemById(id));
                             break;
                     }
                     break;
@@ -74,8 +74,8 @@ public class onPlayerInventoryUpdate implements Emitter.Listener {
                         case HELMET:
                             heroInventory.setHelmet(null);
                             break;
-                        case HEALING_ITEM:
-                            heroInventory.getListHealingItem().remove(HealingItemFactory.getHealingItemById(id));
+                        case SUPPORT_ITEM:
+                            heroInventory.getListSupportItem().remove(SupportItemFactory.getSupportItemById(id));
                             break;
                     }
                     break;

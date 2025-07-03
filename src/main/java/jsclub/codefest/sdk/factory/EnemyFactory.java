@@ -11,8 +11,8 @@ public class EnemyFactory {
     private static final Map<String, Enemy> enemyMap = Map.of(
         "NATIVE", new Enemy("NATIVE", 10),
         "GHOST", new Enemy("GHOST", 10),
-        "LEOPARD", new Enemy("LEOPARD", 5),
-        "ANACONDA", new Enemy("ANACONDA", 5),
+        "LEOPARD", new Enemy("LEOPARD", 15),
+        "ANACONDA", new Enemy("ANACONDA", 25),
         "RHINO", new Enemy("RHINO", 15),
         "GOLEM", new Enemy("GOLEM", 15)
     );
@@ -44,5 +44,13 @@ public class EnemyFactory {
         enemy.setId(id);
 
         return enemy;
+    }
+
+    public static Enemy getEnemy(String id, int x, int y, boolean isCooldownActive, int cooldownStepLeft) throws CloneNotSupportedException {
+        Enemy enemyBase = getEnemy(id, x, y);
+        enemyBase.setCooldownActive(isCooldownActive);
+        enemyBase.setCooldownStepLeft(cooldownStepLeft);
+
+        return enemyBase;
     }
 }

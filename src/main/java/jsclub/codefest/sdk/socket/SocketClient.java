@@ -6,12 +6,9 @@ import io.socket.emitter.Emitter;
 import jsclub.codefest.sdk.model.GameMap;
 import jsclub.codefest.sdk.model.Inventory;
 import jsclub.codefest.sdk.model.effects.Effect;
-import jsclub.codefest.sdk.socket.data.receive_data.ItemData;
 import jsclub.codefest.sdk.socket.event_handler.*;
-import jsclub.codefest.sdk.util.MsgPackUtil;
 import jsclub.codefest.sdk.util.SocketUtil;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -50,8 +47,8 @@ public class SocketClient {
             socket.on(EventName.ON_MAP_INIT, new onMapInit(gameMap));
             socket.on(EventName.ON_MAP_UPDATE, onMapUpdate);
             socket.on(EventName.ON_INVENTORY_ADD,new onPlayerInventoryAdd(heroInventory));
-            socket.on(EventName.ON_INVENTORY_CLEAR,new onplayerInventoryClear(heroInventory));
-            socket.on(EventName.ON_EFFECT_APPLY,new onPlayerEffectApply(heroEffect));
+            socket.on(EventName.ON_INVENTORY_CLEAR,new onPlayerInventoryClear(heroInventory));
+            socket.on(EventName.ON_EFFECT_APPLY,new onPlayerEffectApply(heroEffect, gameMap));
             socket.on(EventName.ON_EFFECT_CLEAR,new onPlayerEffectClear(heroEffect));
             socket.on(EventName.ON_PLAYER_REMOVE, args1 -> {
                 System.out.println("You've been kicked out of the server");

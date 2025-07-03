@@ -2,7 +2,9 @@ package jsclub.codefest.sdk.util;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import okhttp3.*;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.WebSocket;
 
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;

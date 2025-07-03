@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class AllyFactory {
     private static final Map<String, Ally> allyMap = Map.of(
-        "SPIRIT", new Ally("SPIRIT", 50, 10)
+        "SPIRIT", new Ally("SPIRIT", 50)
     );
 
     /**
@@ -36,5 +36,13 @@ public class AllyFactory {
         ally.setId(id);
 
         return ally;
+    }
+
+    public static Ally getAlly(String id, int x, int y, boolean isCooldownActive, int cooldownStepLeft) throws CloneNotSupportedException {
+        Ally allyBase = getAlly(id, x, y);
+        allyBase.setCooldownActive(isCooldownActive);
+        allyBase.setCooldownStepLeft(cooldownStepLeft);
+
+        return allyBase;
     }
 }

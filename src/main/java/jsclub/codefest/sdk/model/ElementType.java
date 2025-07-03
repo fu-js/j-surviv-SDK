@@ -9,6 +9,7 @@ public enum ElementType {
     THROWABLE,
     SPECIAL,
     HEALING_ITEM,
+    SUPPORT_ITEM,
     ARMOR,
     HELMET,
     INDESTRUCTIBLE,

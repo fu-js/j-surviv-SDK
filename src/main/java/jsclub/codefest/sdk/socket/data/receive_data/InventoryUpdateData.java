@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import jsclub.codefest.sdk.model.ElementType;
 
 public class InventoryUpdateData {
-
     @SerializedName("item_type")
     public ElementType itemType;
 
