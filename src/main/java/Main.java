@@ -447,9 +447,9 @@ class MapUpdateListener implements Emitter.Listener {
         List<Node> nodes = new ArrayList<>(gameMap.getListIndestructibles());
 
         nodes.removeAll(gameMap.getObstaclesByTag("CAN_GO_THROUGH"));
-        nodes.addAll(gameMap.getListTraps());
+        nodes.addAll(gameMap.getObstaclesByTag("TRAP"));
         nodes.addAll(gameMap.getOtherPlayerInfo());
-        nodes.addAll(gameMap.getListChests());
+        nodes.addAll(gameMap.getObstaclesByTag("DESTRUCTIBLE"));
         return nodes;
     }
 
@@ -534,7 +534,7 @@ class MapUpdateListener implements Emitter.Listener {
     }
 
     private Obstacle getNearestChest(GameMap gameMap, Player player) {
-        List<Obstacle> chests = gameMap.getListChests();
+        List<Obstacle> chests = gameMap.getObstaclesByTag("DESTRUCTIBLE");
         Obstacle nearestChest = null;
         double minDistance = Double.MAX_VALUE;
 
