@@ -292,8 +292,6 @@ public class Hero {
      * @param itemId the ID of the item to use
      * @throws IOException if an I/O error occurs
      */
-
-
     public void useItem(String itemId) throws IOException {
         Socket socket = socketClient.getSocket();
         SupportItem item = SupportItemFactory.getSupportItemById(itemId);
@@ -310,11 +308,7 @@ public class Hero {
             throw new IllegalStateException("Socket is null or cannot get item");
         }
 
-        List<SupportItem> inventAfter = inventory.getListSupportItem();
-        inventAfter.remove(indexOfItem);
-        inventory.setListSupportItem(inventAfter);
         PlayerUseItemAction botUseItem = new PlayerUseItemAction(itemId);
-
         byte[] bytes = MsgPackUtil.encodeFromObject(botUseItem);
         socket.emit(EventName.EMIT_USE_ITEM, (Object) bytes);
     }
