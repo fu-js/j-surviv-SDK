@@ -28,8 +28,9 @@ public class PathUtils {
      */
 
     public static boolean checkInsideSafeArea(Node current, int safeZone, int mapSize) {
-        float center = (float) (mapSize -1 )/2;
-        return (Math.abs(current.getX() - center) <= safeZone && Math.abs(current.getY() - center) <= safeZone);
+        int darkAreaSize = (mapSize - (safeZone * 2)) / 2;
+        return (current.x >= darkAreaSize && current.x < mapSize - darkAreaSize &&
+                current.y >= darkAreaSize && current.y < mapSize - darkAreaSize);
     }
     /**
      * The algorithm to find the shortest path from the current node to the target node
@@ -114,7 +115,7 @@ public class PathUtils {
                 if (x < 0 || y < 0 || x >= mapSize || y >= mapSize) continue;
                 if (isRestrictedNodes.get(x).get(y) == 1) continue;
 
-                if (!skipDarkArea && !checkInsideSafeArea(current, safeZone, gameMap.getMapSize()))
+                if (skipDarkArea && !checkInsideSafeArea(new Node(x, y), safeZone, gameMap.getMapSize()))
                     continue;
 
                 int cost = g.get(u.x).get(u.y) + 1;
