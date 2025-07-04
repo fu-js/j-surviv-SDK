@@ -75,11 +75,6 @@ class MapUpdateListener implements Emitter.Listener {
             List<Node> nodesToAvoid = getNodesToAvoid(gameMap);
             Player nearestPlayer = getNearestPlayer(gameMap, player);
 
-            System.out.println("Healing items: " + heroInvent.getListSupportItem().size());
-
-            if (heroInvent.getListSupportItem().size() > 0 && player.getHealth() <= 80) {
-                hero.useItem(heroInvent.getListSupportItem().get(0).getId());
-            }
 
             // --- Original game logic follows if no stuck or oscillation issues ---
             if (heroInvent.getGun() == null) {
@@ -90,10 +85,6 @@ class MapUpdateListener implements Emitter.Listener {
             } else if (heroInvent.getMelee().getId().compareToIgnoreCase("Hand") == 0) {
                 if (PathUtils.distance(player, nearestPlayer) <= 4) {
                     handleCombatByGun(nearestPlayer, nodesToAvoid, player);
-                } else if (findPathToHealing(gameMap, nodesToAvoid, player) != null
-                        && findPathToHealing(gameMap, nodesToAvoid, player).length() <= 4
-                        && heroInvent.getListSupportItem().size() < 4) {
-                    handleSearchForHealing(gameMap, player, nodesToAvoid);
                 } else if (findPathToMelee(gameMap, nodesToAvoid, player) != null) {
                     handleSearchForMelee(gameMap, player, nodesToAvoid);
                 } else {
@@ -109,12 +100,6 @@ class MapUpdateListener implements Emitter.Listener {
                 }
             }
 
-//            test pick heal
-//            if (findPathToHealing(gameMap, nodesToAvoid, player) != null) {
-//                handleSearchForHealing(gameMap, player, nodesToAvoid);
-//            }  else {
-//                handleFindNearestChest(gameMap, player, nodesToAvoid);
-//            }
 
         } catch (Exception e) {
             System.err.println("Critical error in call method: " + e.getMessage());
