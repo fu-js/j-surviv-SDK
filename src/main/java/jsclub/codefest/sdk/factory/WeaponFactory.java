@@ -33,7 +33,7 @@ public class WeaponFactory {
             
             // Special Weapons
             Map.entry("ROPE", new Weapon("ROPE", ElementType.SPECIAL, 50, 15, 20, 15, new int[]{1, 6}, -1, -1, 2)),
-            Map.entry("BELL", new Weapon("BELL", ElementType.SPECIAL, 60, 15, 0, 15, new int[]{7, 7}, -1, -1, 1)),
+            Map.entry("BELL", new Weapon("BELL", ElementType.SPECIAL, 70, 30, 0, 30, new int[]{7, 7}, -1, -1, 1)),
             Map.entry("SAHUR_BAT", new Weapon("SAHUR_BAT", ElementType.SPECIAL, 50, 20, 20, 20, new int[]{1, 5}, -1, -1, 3))
     );
 
