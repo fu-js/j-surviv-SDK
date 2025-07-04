@@ -18,7 +18,7 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-    private static final String GAME_ID = "170859";
+    private static final String GAME_ID = "192525";
     private static final String PLAYER_NAME = "lily";
     private static final String SECRET_KEY = "sk-QzpmiqwsQcGzZE9lPPEKqw:vJpcUbwUzYpSSj7QqrqPx4TrjPlYATfg-AnkYisTZN77J5hXRh3xs925DL6KdzgnKEjeWNcS6QAP6KsW-pHnxQ";
 //    private static final String SECRET_KEY = "sk-HbwuDkLNRRya5SvoCKCVVQ:qNGGSN8d82o4m2tGJEWjpyJScDlnCHBn4Gg0K2Zdr9z1f76-9DTGQ5anZytbsN1mpfulkRffk01ukhhf3y7kEg";
@@ -26,11 +26,6 @@ public class Main {
     public static final int STUCK_LIMIT = 4;
     public static final int DODGE_RANGE = 3;
 
-    // --- NEW CONSTANTS FOR OSCILLATION DETECTION ---
-    public static final int OSCILLATION_HISTORY_SIZE = 5; // How many past positions to remember
-    public static final int OSCILLATION_THRESHOLD = 3;    // How many times it has to oscillate to trigger evasive action
-    public static final int EVASIVE_MANEUVER_DURATION = 2; // How many steps to perform the evasive maneuver
-    // -------------------------------------------------
 
     public static void main(String[] args) throws IOException {
         Hero hero = new Hero(GAME_ID, PLAYER_NAME, SECRET_KEY);
@@ -47,9 +42,6 @@ class MapUpdateListener implements Emitter.Listener {
     private Node lastPosition = new Node(-1, -1);
     private int step = 0;
 
-    // --- NEW FIELDS FOR OSCILLATION DETECTION ---
-    private List<Node> positionHistory = new ArrayList<>();
-    // ---------------------------------------------
 
     public MapUpdateListener(Hero hero) {
         this.hero = hero;
@@ -72,8 +64,6 @@ class MapUpdateListener implements Emitter.Listener {
 
             System.out.println("Inventory: "+hero.getInventory());
 
-            // --- Update position history first ---
-            updatePositionHistory(player);
 
             // --- Check for and handle general stuck (no movement at all) ---
             handleStuckDetection(player); // This detects if the bot is literally not moving
@@ -132,45 +122,6 @@ class MapUpdateListener implements Emitter.Listener {
         }
     }
 
-    /**
-     * Updates the bot's position history.
-     * @param player The current player's state.
-     */
-    private void updatePositionHistory(Player player) {
-        Node currentPos = new Node(player.x, player.y);
-        // Add current position to the front of the list
-        positionHistory.add(0, currentPos);
-        // Trim the list to maintain the desired history size
-        while (positionHistory.size() > Main.OSCILLATION_HISTORY_SIZE) {
-            positionHistory.remove(positionHistory.size() - 1);
-        }
-    }
-
-    /**
-     * Checks if the bot is oscillating and initiates an evasive maneuver if needed.
-     * @param player The current player's state.
-     * @throws IOException
-     */
-
-    /**
-     * Executes the evasive maneuver.
-     * @param player The current player's state.
-     * @throws IOException
-     */
-
-    /**
-     * Determines a strategic direction to break oscillation.
-     * Prioritizes perpendicular movement.
-     * @param player The current player's state.
-     * @return A direction string ("u", "d", "l", "r") or null if no immediate safe direction.
-     */
-
-
-    /**
-     * Handles the case where the bot is completely stuck (not changing position).
-     * This is separate from oscillatory behavior where it *is* moving, just back and forth.
-     * @throws IOException
-     */
     private void handleGeneralStuck() throws IOException {
         System.out.println("Bot is completely stuck (not moving)! Attempting random movement.");
         hero.move(getRandomDirection());

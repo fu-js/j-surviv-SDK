@@ -107,6 +107,7 @@ public class GameMap {
             
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
+            System.out.println("update map: "+message);
             MapData mapData = gson.fromJson(message, MapData.class);
 
             // Extend listObstacles with listIndestructibles (get from init map)
