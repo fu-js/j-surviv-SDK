@@ -18,9 +18,9 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-    private static final String GAME_ID = "162405";
+    private static final String GAME_ID = "151778";
     private static final String PLAYER_NAME = "lily";
-    private static final String SECRET_KEY = "sk-5gxPpLM8STy3UPgrD4hYpg:zKeojjSWhrpa3SF0IzgawMA1y2HhT8ImYaApXbGMaw41lvThofGD58Hnd8tOWvJ8SMDyuYCNFkPnM9PGMMBdhA";
+    private static final String SECRET_KEY = "sk-jIhc4B4eRvK6MdPdNuKhJw:6uLty2Vk-znN6z625D0F6lBPpDDwLgwVtpsAWD0PqT0qFraglNOD7cE-QBieiYrQLzqFeY_ZcCZ4l0gOv0FcjQ";
 
     public static final int STUCK_LIMIT = 4;
     public static final int DODGE_RANGE = 3;
@@ -79,7 +79,7 @@ class MapUpdateListener implements Emitter.Listener {
                     System.out.println("Dancing...........");
                     hero.move("l");
                     countDanceEscapse++;
-                    if(countDanceEscapse == 3){
+                    if(countDanceEscapse == 2){
                         evenNodes = new ArrayList<>();
                         countDanceEscapse = 0;
                     }
