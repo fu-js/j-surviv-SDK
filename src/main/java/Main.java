@@ -18,10 +18,9 @@ import java.util.Random;
 
 public class Main {
     private static final String SERVER_URL = "https://cf25-server.jsclub.dev";
-    private static final String GAME_ID = "192525";
+    private static final String GAME_ID = "162405";
     private static final String PLAYER_NAME = "lily";
-    private static final String SECRET_KEY = "sk-QzpmiqwsQcGzZE9lPPEKqw:vJpcUbwUzYpSSj7QqrqPx4TrjPlYATfg-AnkYisTZN77J5hXRh3xs925DL6KdzgnKEjeWNcS6QAP6KsW-pHnxQ";
-//    private static final String SECRET_KEY = "sk-HbwuDkLNRRya5SvoCKCVVQ:qNGGSN8d82o4m2tGJEWjpyJScDlnCHBn4Gg0K2Zdr9z1f76-9DTGQ5anZytbsN1mpfulkRffk01ukhhf3y7kEg";
+    private static final String SECRET_KEY = "sk-5gxPpLM8STy3UPgrD4hYpg:zKeojjSWhrpa3SF0IzgawMA1y2HhT8ImYaApXbGMaw41lvThofGD58Hnd8tOWvJ8SMDyuYCNFkPnM9PGMMBdhA";
 
     public static final int STUCK_LIMIT = 4;
     public static final int DODGE_RANGE = 3;
@@ -41,6 +40,9 @@ class MapUpdateListener implements Emitter.Listener {
     private int stuckCounter = 0;
     private Node lastPosition = new Node(-1, -1);
     private int step = 0;
+
+    private List<Node> evenNodes = new ArrayList<>();
+    private int countDanceEscapse = 0;
 
 
     public MapUpdateListener(Hero hero) {
@@ -62,7 +64,34 @@ class MapUpdateListener implements Emitter.Listener {
                 return;
             }
 
-            System.out.println("Inventory: "+hero.getInventory());
+//            Handle dance
+            if(evenNodes.size() == 3) {
+                boolean check = true;
+                for (int i = 0; i < 3; i++) {
+                    if(!compare2Nodes(evenNodes.get(0), evenNodes.get(i))) {
+                        check = false;
+                        evenNodes.removeFirst();
+                        break;
+                    }
+                }
+
+                if(check) {
+                    System.out.println("Dancing...........");
+                    hero.move("l");
+                    countDanceEscapse++;
+                    if(countDanceEscapse == 3){
+                        evenNodes = new ArrayList<>();
+                        countDanceEscapse = 0;
+                    }
+
+                    return;
+                } else {
+                    System.out.println("Not Dancing.");
+                }
+            }
+            if(gameMap.getStepNumber() % 2 == 0 && evenNodes.size() < 3) {
+                evenNodes.add(new Node(player.getX(), player.getY()));
+            }
 
 
             // --- Check for and handle general stuck (no movement at all) ---
@@ -75,6 +104,13 @@ class MapUpdateListener implements Emitter.Listener {
             List<Node> nodesToAvoid = getNodesToAvoid(gameMap);
             Player nearestPlayer = getNearestPlayer(gameMap, player);
 
+//            if (heroInvent.getListSupportItem().size() == 4
+//                    && player.getHealth() <= 80
+//            ) {
+//                System.out.println("step: "+gameMap.getStepNumber());
+//                System.out.println("use: "+heroInvent.getListSupportItem().get(0).getId());
+//                hero.useItem(heroInvent.getListSupportItem().get(0).getId());
+//            }
 
             // --- Original game logic follows if no stuck or oscillation issues ---
             if (heroInvent.getGun() == null) {
@@ -84,8 +120,20 @@ class MapUpdateListener implements Emitter.Listener {
                 handleSearchForGun(gameMap, player, nodesToAvoid);
             } else if (heroInvent.getMelee().getId().compareToIgnoreCase("Hand") == 0) {
                 if (PathUtils.distance(player, nearestPlayer) <= 4) {
-                    handleCombatByGun(nearestPlayer, nodesToAvoid, player);
-                } else if (findPathToMelee(gameMap, nodesToAvoid, player) != null) {
+                    if (step == 0) {
+                        handleCombatByGun(nearestPlayer, nodesToAvoid, player);
+                        step++;
+                    } else if (step == 1) {
+                        handleCombatByMelee(nearestPlayer, nodesToAvoid, player);
+                        step = 0;
+                    }
+                }
+//                else if (findPathToHealing(gameMap, nodesToAvoid, player) != null
+//                        && findPathToHealing(gameMap, nodesToAvoid, player).length() <= 4
+//                        && heroInvent.getListSupportItem().size() < 4) {
+//                    handleSearchForHealing(gameMap, player, nodesToAvoid);
+//                }
+                else if (findPathToMelee(gameMap, nodesToAvoid, player) != null) {
                     handleSearchForMelee(gameMap, player, nodesToAvoid);
                 } else {
                     handleFindNearestChest(gameMap, player, nodesToAvoid);
@@ -100,11 +148,21 @@ class MapUpdateListener implements Emitter.Listener {
                 }
             }
 
+//            test pick heal
+//            if (findPathToHealing(gameMap, nodesToAvoid, player) != null) {
+//                handleSearchForHealing(gameMap, player, nodesToAvoid);
+//            }  else {
+//                handleFindNearestChest(gameMap, player, nodesToAvoid);
+//            }
 
         } catch (Exception e) {
             System.err.println("Critical error in call method: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private boolean compare2Nodes (Node a, Node b) {
+        return a.getX() == b.getX() && a.getY() == b.getY();
     }
 
     private void handleGeneralStuck() throws IOException {
@@ -316,18 +374,18 @@ class MapUpdateListener implements Emitter.Listener {
     private String findPathToChest(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
         Obstacle nearestChest = getNearestChest(gameMap, player);
         if (nearestChest == null) return null;
-        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestChest, false);
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestChest, true);
     }
     private String findPathToMelee(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
         Weapon nearestMelee = getNearestMelee(gameMap, player);
         if (nearestMelee == null) return null;
-        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestMelee, false);
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestMelee, true);
     }
 
     private String findPathToThrowable(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
         Weapon nearestThrow = getNearestThrow(gameMap, player);
         if (nearestThrow == null) return null;
-        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestThrow, false);
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestThrow, true);
     }
 
 
@@ -408,13 +466,13 @@ class MapUpdateListener implements Emitter.Listener {
     private String findPathToGun(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
         Weapon nearestGun = getNearestGun(gameMap, player);
         if (nearestGun == null) return null;
-        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestGun, false);
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestGun, true);
     }
 
     private String findPathToHealing(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
         SupportItem nearestHeal = getNearestHealing(gameMap, player);
         if (nearestHeal == null) return null;
-        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestHeal, false);
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestHeal, true);
     }
 
     private SupportItem getNearestHealing(GameMap gameMap, Player player) {
@@ -451,7 +509,7 @@ class MapUpdateListener implements Emitter.Listener {
     private String findPathToSpecial(GameMap gameMap, List<Node> nodesToAvoid, Player player) {
         Weapon nearestSpecial = getNearestSpecial(gameMap, player);
         if (nearestSpecial == null) return null;
-        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestSpecial, false);
+        return PathUtils.getShortestPath(gameMap, nodesToAvoid, player, nearestSpecial, true);
     }
 
     private Weapon getNearestSpecial(GameMap gameMap, Player player) {
@@ -518,7 +576,7 @@ class MapUpdateListener implements Emitter.Listener {
     }
 
     private String findPathToOtherPlayer(List<Node> nodesToAvoid, Player player, Player nearestPlayer) {
-        return PathUtils.getShortestPath(hero.getGameMap(), nodesToAvoid, player, nearestPlayer, false);
+        return PathUtils.getShortestPath(hero.getGameMap(), nodesToAvoid, player, nearestPlayer, true);
     }
 
     private String getRandomDirection() {
