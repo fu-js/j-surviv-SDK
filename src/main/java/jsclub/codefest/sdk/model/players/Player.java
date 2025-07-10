@@ -32,4 +32,8 @@ public class Player extends Element {
     public int getScore() {
         return score;
     }
+
+    public List<String> getCanBeSeenBy() {
+        return canBeSeenBy;
+    }
 }

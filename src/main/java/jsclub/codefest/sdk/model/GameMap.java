@@ -104,7 +104,6 @@ public class GameMap {
         try {
             // Increment step number on each update
             this.stepNumber++;
-            
             Gson gson = new Gson();
             String message = MsgPackUtil.decode(arg);
             MapData mapData = gson.fromJson(message, MapData.class);
@@ -119,10 +118,30 @@ public class GameMap {
             List<SupportItem> newListSupportItem = new ArrayList<>();
             List<Armor> newListArmor = new ArrayList<>();
             List<Bullet> newListBullets = new ArrayList<>();
-
+            List<Player> cannotSee = new ArrayList<>();
+            boolean isBlind = false;
             setSafeZone(mapData.safeZone);
 
+            for(Player otherPlayer : mapData.otherPlayers){
+                if(otherPlayer.getCanBeSeenBy() == null || !otherPlayer.getCanBeSeenBy().contains(mapData.currentPlayer.getID())){
+                    cannotSee.add(otherPlayer);
+                }
+            }
+            mapData.otherPlayers.removeAll(cannotSee);
+
+            for(Effect effect : this.heroEffect){
+                if(effect.id.equals("BLIND")){
+                    isBlind = true;
+                    mapData.otherPlayers.clear();
+                    newListObstacles.clear();
+                    break;
+                }
+            }
+
             for (Entity entity : mapData.listEntities) {
+                if(isBlind){
+                    break;
+                }
                 // On game update will send all changeable obstacles, for 2025 version, we only have chests and traps.
                 if (entity.type == ElementType.CHEST) {
                     Obstacle obstacle = ObstacleFactory.getObstacle(entity.id, entity.x, entity.y);
@@ -179,6 +198,8 @@ public class GameMap {
                      newListBullets.add(b);
                  }
             }
+
+
 
             // Update the lists in GameMap
             setListObstacles(newListObstacles);
